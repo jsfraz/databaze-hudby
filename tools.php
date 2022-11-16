@@ -1,19 +1,15 @@
 <?php
-//vytvoření připojení
-function getMysqlConnection() {
-  return mysqli_connect(
-    getenv("servername"),
-    getenv("username"),
-    getenv("password"),
-    getenv("dbname"));
+function querySql($sql) {
+  //$conn = getMysql();
+  $db = new SQLite3(__DIR__ . "/database.db");
+  return $db->query($sql);
 }
 
-function querySql($sql) {
-  $conn = getMysqlConnection();
-  //kontrola připojení
-  if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+function hasRows($result) {
+  $rows = 0;
+  while ($result->fetchArray() && $rows == 0) {
+    $rows++;
   }
-  return $conn->query($sql);
+  return $rows > 0;
 }
 ?>
