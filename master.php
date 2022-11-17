@@ -2,7 +2,7 @@
   <head>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>Databáze hudby</title>
-    <!-- https://stackoverflow.com/questions/8249220/masterpage-in-php -->
+    <!-- master šablona https://stackoverflow.com/questions/8249220/masterpage-in-php -->
   </head>
   <body>
     <!-- začátek headeru-->

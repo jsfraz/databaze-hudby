@@ -1,4 +1,6 @@
 <?php
-$content = "songs_text.php";
-include "../master.php";
+//skladby
+
+$content = "songs_text.php";    //skript generující text
+include "../master.php";    //šablona
 ?>
