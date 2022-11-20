@@ -20,7 +20,6 @@ echo '<div class="d-flex align-items-center py-5 cover section-fade-in-out" styl
     </div>
   </div>
 </div>
-<!-- Intro section -->
 <div class="py-5 section-fade-in" style="	background-image: url(images/index/nirvana.jpg);	background-position: top left;	background-size: 100%;	background-repeat: repeat;">
   <div class="container p-4 my-5">
     <div class="row">

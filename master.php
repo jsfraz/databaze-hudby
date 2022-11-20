@@ -15,7 +15,7 @@
       <div class="collapse navbar-collapse justify-content-center" id="navbar2SupportedContent">
         <ul class="navbar-nav">
           <li class="nav-item mx-2">
-            <a href="/"><i class="fa text-muted fa-home fa-3x"></i></a>
+            <a class="nav-link" href="/">Domů</a>
           </li>
           <li class="nav-item mx-2">
             <a class="nav-link" href="/songs">Skladby</a>
@@ -44,11 +44,12 @@
       <div class="row">
         <div class="my-3 col-lg-4 col-md-4">
           <h3>Zpětná vazba</h3>
-          <form>
+          <form action="/feedback.php" method="post">
             <fieldset class="form-group my-3">
-              <input type="email" class="form-control" id="Input Email" placeholder="Email"> </fieldset>
+              <input type="email" class="form-control" name="mail" placeholder="Email" required> </fieldset>
             <fieldset class="form-group my-3">
-              <input type="message" class="form-control" id="Input Message" placeholder="Zpráva"> </fieldset>
+              <input type="text" class="form-control" name="message" placeholder="Zpráva" required> </fieldset>
+            <input type="hidden" name="path" value="<?php echo $_SERVER["REQUEST_URI"] ?>" required>
             <button type="submit" class="btn btn-outline-primary">Odeslat</button>
           </form>
         </div>

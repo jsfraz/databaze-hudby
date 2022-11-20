@@ -16,7 +16,7 @@ function getSqliteConnection() {
 //vykoná dotaz
 function querySql($sql) {
   $useMysql = false;    //mysql nebo sqlite
-  $db = null;
+  $db;
   //použití mysql nebo sqlite
   if ($useMysql) {
     $db = getMysqlConnection();
