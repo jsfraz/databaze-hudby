@@ -1,5 +1,5 @@
 <?php
-if ($_SERVER["REQUEST_URI"] == "/" || $_SERVER["REQUEST_URI"] == "/index.php") {
+if ($_SERVER["REQUEST_URI"] == "/") {
     //pohoda
 } else {
   echo "Chyba v Matrixu"; //TODO forbidden stránka

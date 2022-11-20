@@ -20,7 +20,7 @@
       if (filter_var($email, FILTER_VALIDATE_EMAIL) && empty($message) == false) {
           //TODO odeslání feedbacku mailem
           $title = "Děkujeme!";
-          $text = "Vážíme si vaší zětné vazby.";
+          $text = "Vážíme si vaší zpětné vazby.";
       } else {
           $title = "Chyba!";
           $text = "Váš e-mail není správný nebo jste odeslali prázdnou zprávu.";
