@@ -1,12 +1,30 @@
 <?php
-//kontrola cesty, aby se nešlo dostat na skript generující text
-if ($_SERVER["REQUEST_URI"] == "/") {
-    //platná cesta
-  
-    echo "<h1>Hlavní stránka</h1>";
-    echo "Verze PHP: " . phpversion();
-} else {
-    //neplatná cesta
-    echo "Chyba v Matrixu";
-}
+if ($_SERVER["REQUEST_URI"] != "/") {
+    echo "Chyba v Matrixu"; //TODO forbidden stránka
+    exit();
+} ?>
+
+<?php
+$x = rand(1,10);
+echo '<div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(images/index/index_cover' . $x . '.jpg);">';
 ?>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 mt-5">
+        <h1 class="display-4">Databáze hudby</h1>
+        <p class="lead">Skladby, alba, interpreti...</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Intro section -->
+<div class="py-5 section-fade-in" style="	background-image: url(images/index/nirvana.jpg);	background-position: top left;	background-size: 100%;	background-repeat: repeat;">
+  <div class="container p-4 my-5">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="mb-3">O nás</h1>
+        <p>Zde najdete seznam hudebních skladeb, alb, žánrů a interpretů. <br>Jedná se o malý projekt, jehož cílem je shromažďovat informace o tom co nás baví, a to je hudba. </p>
+      </div>
+    </div>
+  </div>
+</div>
