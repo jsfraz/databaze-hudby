@@ -25,7 +25,7 @@ echo '<div class="d-flex align-items-center py-5 cover section-fade-in-out" styl
     <div class="row">
       <div class="col-12">
         <h1 class="mb-3">O nás</h1>
-        <p>Zde najdete seznam hudebních skladeb, alb, žánrů a interpretů. <br>Jedná se o malý projekt, jehož cílem je shromažďovat informace o tom co nás baví, a to je hudba. </p>
+        <h2>Zde najdete seznam hudebních skladeb, alb, žánrů a interpretů. <br>Jedná se o malý projekt, jehož cílem je shromažďovat informace o tom co nás baví, a to je hudba. </h2>
       </div>
     </div>
   </div>

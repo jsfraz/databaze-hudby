@@ -46,7 +46,7 @@
           <h3>Zpětná vazba</h3>
           <form action="/feedback.php" method="post">
             <fieldset class="form-group my-3">
-              <input type="email" class="form-control" name="mail" placeholder="Email" required> </fieldset>
+              <input type="email" class="form-control" name="email" placeholder="Email" required> </fieldset>
             <fieldset class="form-group my-3">
               <input type="text" class="form-control" name="message" placeholder="Zpráva" required> </fieldset>
             <input type="hidden" name="path" value="<?php echo $_SERVER["REQUEST_URI"] ?>" required>
