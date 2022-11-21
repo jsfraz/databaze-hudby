@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
     exit();
 } ?>
 
+<!-- duhové pozadí https://stackoverflow.com/questions/56418763/creating-the-perfect-rainbow-gradient-in-css/63302468#63302468 --->
 <div class="align-items-center cover py-5" style="	background-image: linear-gradient(
         to bottom,
         rgba(255, 0, 0, 0.1) 0%,

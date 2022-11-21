@@ -10,6 +10,7 @@ function getMysqlConnection() {
 
 //sqlite "připojení" ze souboru
 function getSqliteConnection() {
+  //root adresář https://stackoverflow.com/questions/8668776/get-root-directory-path-of-a-php-project/8668853#8668853
   return new SQLite3(__DIR__ . "/" . getenv("sqlite_file"));
 }
 

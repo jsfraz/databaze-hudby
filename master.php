@@ -49,6 +49,7 @@
               <input type="email" class="form-control" name="email" placeholder="Email" required> </fieldset>
             <fieldset class="form-group my-3">
               <input type="text" class="form-control" name="message" placeholder="Zpráva" required> </fieldset>
+            <!-- skrytá proměnná https://stackoverflow.com/questions/34253825/how-to-send-hidden-php-variable-with-html-form/34254076#34254076 --->
             <input type="hidden" name="path" value="<?php echo $_SERVER["REQUEST_URI"] ?>" required>
             <button type="submit" class="btn btn-outline-primary">Odeslat</button>
           </form>
@@ -56,7 +57,7 @@
         <div class="col-lg-4"> </div>
         <div class="my-3 col-lg-4">
           <h3>Odkazy</h3>
-          <a href="https://github.com/jsfraz/databaze-hudby""><i class="fa text-muted fa-3x m-2 fa-github" ></i></a>
+          <a href="https://github.com/jsfraz/databaze-hudby"><i class="fa text-muted fa-3x m-2 fa-github" ></i></a>
           <a href="https://replit.com/@jsfrz/databaze-hudby"><i class="fa fa-3x text-muted m-2 fa-code"></i></a>
         </div>
       </div>
