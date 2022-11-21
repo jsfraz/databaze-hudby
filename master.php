@@ -4,7 +4,7 @@
     <!-- master šablona podle https://stackoverflow.com/questions/8249220/masterpage-in-php -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>Databáze hudby</title>
-    <link rel="stylesheet" href="neon.css">
+    <link rel="stylesheet" href="/neon.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
   </head>
   <body class="text-center">

@@ -10,22 +10,23 @@ function getMysqlConnection() {
 
 //sqlite "připojení" ze souboru
 function getSqliteConnection() {
-  //root adresář https://stackoverflow.com/questions/8668776/get-root-directory-path-of-a-php-project/8668853#8668853
-  return new SQLite3(__DIR__ . "/" . getenv("sqlite_file"));
+  return new SQLite3($_SERVER['DOCUMENT_ROOT'] . "/" . getenv("sqlite_file"));
 }
 
-//vykoná dotaz
+//vykoná dotaz a vrátí pole řádků
 function querySql($sql) {
-  $useMysql = false;    //mysql nebo sqlite
-  $db;
   //použití mysql nebo sqlite
-  if ($useMysql) {
-    $db = getMysqlConnection();
-  } else {
-    $db = getSqliteConnection();
-  }
+  $db = getSqliteConnection();
   //výsledek
   return $db->query($sql);
+}
+
+//vykoná dotaz a vrátí jeden výsledek
+function querySqlSingle($sql) {
+  //použití mysql nebo sqlite{
+  $db = getSqliteConnection();
+  //výsledek
+  return $db->querySingle($sql);
 }
 
 //počet řádků které dotaz vrátil https://stackoverflow.com/questions/48935729/how-to-count-records-in-query-result-on-sqlite3-using-php

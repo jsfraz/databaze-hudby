@@ -24,10 +24,10 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div class="list-group">
+          <div class="list-group mt-4"">
               <?php
               //nástroje
-              require_once "../tools.php";
+              require_once $_SERVER['DOCUMENT_ROOT'] . "/tools.php";
 
               //dotaz na všechny skladby
               $result = querySql(
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
                   //jeden a více výsledků
 
                   //hlavička tabulky
-                  echo '<div class="list-group-item text-center text-uppercase">
+                  echo '<div class="list-group-item  text-center text-uppercase">
               <div class="row">
                 <div class="col-md-4">
                   <h4>Název</h4>
@@ -73,7 +73,15 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
                           $row["name_interpret"] .
                           '</h5>
                 </a>
-                <div class="col-md-1">
+                <div class="col-md-1" >
+                  <div class="row">
+                    <div class="col-md-6">
+                      <a href="/songs/edit?id=' . $row["id_song"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
+                    </div>
+                    <div class="col-md-6">
+                      <a href="/"><i class="fa fa-2x fa-trash text-danger"></i></a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>';
