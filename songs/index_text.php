@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
                 <div class="col-md-1" >
                   <div class="row">
                     <div class="col-md-6">
-                      <a href="/songs/edit?id=' . $row["id_song"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
+                      <a href="/songs/edit?id_song=' . $row["id_song"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
                       <a href="/"><i class="fa fa-2x fa-trash text-danger"></i></a>

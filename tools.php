@@ -29,6 +29,14 @@ function querySqlSingle($sql) {
   return $db->querySingle($sql);
 }
 
+//vykoná bezdotazový příkaz
+function querySqlExec($sql) {
+  //použití mysql nebo sqlite{
+  $db = getSqliteConnection();
+  //výsledek
+  return $db->exec($sql);
+}
+
 //počet řádků které dotaz vrátil https://stackoverflow.com/questions/48935729/how-to-count-records-in-query-result-on-sqlite3-using-php
 function countRows($result) {
   $count = 0;
