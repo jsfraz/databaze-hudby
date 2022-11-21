@@ -1,23 +1,27 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <!-- master šablona podle https://stackoverflow.com/questions/8249220/masterpage-in-php -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <title>Databáze hudby</title>
-    <link rel="stylesheet" href="neon.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-  </head>
-  <?php if ($_SERVER["REQUEST_METHOD"] == "POST") {
+<?php
+if ($_SERVER["REQUEST_URI"] == "/feedback") {
+    //pohoda
+} else {
+    echo "Chyba v Matrixu"; //TODO forbidden stránka
+    exit();
+} ?>
+
+  <?php
+  $title = "";
+  $text = "";
+  $path = "/";
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $email = $_POST["email"];
       $message = $_POST["message"];
       $path = $_POST["path"];
 
-      $title = "";
-      $text = "";
-
       //validace
       //TODO validace cesty
-      if (filter_var($email, FILTER_VALIDATE_EMAIL) && empty($message) == false) {
+      if (
+          filter_var($email, FILTER_VALIDATE_EMAIL) &&
+          empty($message) == false
+      ) {
           //TODO odeslání feedbacku mailem
           $title = "Děkujeme!";
           $text = "Vážíme si vaší zpětné vazby.";
@@ -26,8 +30,10 @@
           $text = "Váš e-mail není správný nebo jste odeslali prázdnou zprávu.";
       }
   } else {
-      exit();
-  } ?>
+      $title = "Chyba!";
+      $text = "Neplatný požadavek.";
+  }
+  ?>
   <body class="text-center">
     <div class="py-5 section-fade-in h-100" style="	background-image: url(images/index/nirvana.jpg);	background-position: top left;	background-size: 100%;	background-repeat: repeat;">
   <div class="container p-4 my-5">
@@ -42,5 +48,3 @@
     </div>
   </div>
 </div>
-  </body>
-</html>

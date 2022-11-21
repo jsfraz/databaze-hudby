@@ -44,7 +44,7 @@
       <div class="row">
         <div class="my-3 col-lg-4 col-md-4">
           <h3>Zpětná vazba</h3>
-          <form action="/feedback.php" method="post">
+          <form action="/feedback" method="post">
             <fieldset class="form-group my-3">
               <input type="email" class="form-control" name="email" placeholder="Email" required> </fieldset>
             <fieldset class="form-group my-3">

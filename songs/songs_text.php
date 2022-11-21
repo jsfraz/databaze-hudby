@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
                 <div class="col-md-1">
                 </div>
               </div>
-              </div>';
+            </div>';
                   }
               } else {
                   //nula výsledků
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
 ';
               }
               ?>
-            </div>
+        
           </div>
         </div>
       </div>
