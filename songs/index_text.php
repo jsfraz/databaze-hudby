@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div class="list-group mt-4"">
+          <div class="list-group mt-4">
               <?php
               //nástroje
               require_once $_SERVER['DOCUMENT_ROOT'] . "/tools.php";
@@ -79,7 +79,10 @@ if ($_SERVER["REQUEST_URI"] == "/songs") {
                       <a href="/songs/edit?id_song=' . $row["id_song"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
-                      <a href="/"><i class="fa fa-2x fa-trash text-danger"></i></a>
+                      <form action="/songs/edit/delete.php" method="post">
+                         <input type="hidden" required="required" name="id_song" value="' . $row["id_song"] . '">
+                        <button class="transparent-btn" type="submit"><i class="fa fa-2x fa-trash text-danger"></i></button>
+                      </form>
                     </div>
                   </div>
                 </div>
