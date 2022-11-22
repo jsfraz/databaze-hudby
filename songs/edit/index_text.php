@@ -5,11 +5,8 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 //GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
-        preg_match("/\/songs\/edit\?id_song=[0-9]+/i", $_SERVER["REQUEST_URI"])
+        preg_match("/\/songs\/edit\?id_song=[0-9]+/i", $_SERVER["REQUEST_URI"]) == false
     ) {
-        //pohoda
-    } else {
-        echo "Chyba v Matrixu"; //error stránka
         exit();
     }
 }
@@ -60,13 +57,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($success) {
                 header("Location: /songs/edit?id_song=" . $id);
-                exit();
             }
         }
     }
     
-    //TODO chyba
-    echo "Chyba v Matrixu";
     exit();
 }
 
@@ -92,8 +86,6 @@ if ($count == 1) {
         "SELECT id_interpret, name_interpret FROM interprets;"
     );
 } else {
-    //neexistuje
-    //TODO oznámení chyby
     exit();
 }
 ?>

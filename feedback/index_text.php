@@ -1,11 +1,8 @@
 <?php
 if (
-    $_SERVER["REQUEST_URI"] == "/feedback" &&
-    $_SERVER["REQUEST_METHOD"] == "POST"
+    $_SERVER["REQUEST_URI"] != "/feedback" ||
+    $_SERVER["REQUEST_METHOD"] != "POST"
 ) {
-    //pohoda
-} else {
-    echo "Chyba v Matrixu"; //TODO forbidden stránka
     exit();
 }
 

@@ -1,9 +1,6 @@
 <?php
-if ($_SERVER["REQUEST_URI"] == "/") {
-    //pohoda
-} else {
-  echo "Chyba v Matrixu"; //TODO forbidden stránka
-  exit();
+if ($_SERVER["REQUEST_URI"] != "/") {
+    exit();
 }
 ?>
 
