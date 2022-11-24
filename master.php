@@ -22,7 +22,7 @@
             <a class="nav-link" href="/songs">Skladby</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="/">Alba</a>
+            <a class="nav-link" href="/albums">Alba</a>
           </li>
           <li class="nav-item mx-2">
             <a class="nav-link" href="/">Žánry</a>

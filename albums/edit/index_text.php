@@ -5,7 +5,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 //GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
-        preg_match("/\/songs\/edit\?id_song=[0-9]+/i", $_SERVER["REQUEST_URI"]) == false
+        preg_match("/\/albums\/edit\?id_album=[0-9]+/i", $_SERVER["REQUEST_URI"]) == false
     ) {
         exit();
     }
@@ -13,26 +13,28 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 //POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //atributy
-    $id = $_POST["id_song"];
-    $name = $_POST["name_song"];
-    $album = $_POST["id_album"];
+    $id = $_POST["id_album"];
+    $name = $_POST["name_album"];
+    $type = $_POST["id_type"];
+    $released = $_POST["released_album"];
     $interpret = $_POST["id_interpret"];
 
-    $songCount; //skladby
     $albumCount; //alba
+    $typeCount; //typy alb
     $interpretCount; //interpreti
     //valdiace
     if (
         empty($id) == false &&
         empty($name) == false &&
-        empty($album) == false &&
+        empty($type) == false &&
+        empty($released) == false &&
         empty($interpret) == false
     ) {
-        $songCount = querySqlSingle(
-            "SELECT COUNT(*) FROM songs WHERE id_song = " . $id . ";"
-        );
         $albumCount = querySqlSingle(
-            "SELECT COUNT(*) FROM albums WHERE id_album = " . $album . ";"
+            "SELECT COUNT(*) FROM albums WHERE id_album = " . $id . ";"
+        );
+        $typeCount = querySqlSingle(
+            "SELECT COUNT(*) FROM album_types WHERE id_type = " . $type . ";"
         );
         $interpretCount = querySqlSingle(
             "SELECT COUNT(*) FROM interprets WHERE id_interpret = " .
@@ -41,50 +43,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         );
 
         //pokud existují
-        if ($songCount == 1 && $albumCount == 1 && $interpretCount == 1) {
+        if ($albumCount == 1 && $typeCount == 1 && $interpretCount == 1) {
             //aktualizace
             $success = querySqlExec(
-                "UPDATE songs SET name_song = '" .
+                "UPDATE albums SET name_album = '" .
                     $name .
-                    "', id_album = " .
-                    $album .
-                    ", id_interpret = " .
+                    "', id_type = " .
+                    $type .
+                    ", released_album = " .
+                    convertYmdToEpochTime($released) .
+                    ",id_interpret = " .
                     $interpret .
-                    " WHERE id_song = " .
+                    " WHERE id_album = " .
                     $id .
                     ";"
             );
 
             if ($success) {
-                header("Location: /songs/edit?id_song=" . $id);
+                header("Location: /albums/edit?id_album=" . $id);
             }
         }
     }
-    
+
     exit();
 }
 
-$id = $_GET["id_song"];
+$id = $_GET["id_album"];
 //kontrola, jestli záznam existuje
 $count = querySqlSingle(
-    "SELECT COUNT(*) FROM songs WHERE id_song = " . $id . ";"
+    "SELECT COUNT(*) FROM albums WHERE id_album = " . $id . ";"
 );
 
 if ($count == 1) {
-    //skladba
-    $songResult = querySql(
-        "SELECT name_song, id_album, id_interpret FROM songs WHERE id_song = " .
+    //album
+    $albumResult = querySql(
+        "SELECT name_album, id_type, released_album, id_interpret FROM albums WHERE id_album = " .
             $id .
             ";"
     );
-    $song;
-    while ($row = $songResult->fetchArray()) {
-        $song = $row;
+    $album;
+    while ($row = $albumResult->fetchArray()) {
+        $album = $row;
     }
-    //alba
-                $albumsResult = querySql(
-                    "SELECT id_album, name_album FROM albums;"
-                );
+    //typy alb
+    $typesResult = querySql(
+        "SELECT id_type, name_type FROM album_types;"
+    );
     //interpreti
     $interpretsResult = querySql(
         "SELECT id_interpret, name_interpret FROM interprets;"
@@ -98,43 +102,50 @@ if ($count == 1) {
   <div class="container">
     <div class="row mx-auto">
       <div class="col-md-12">
-        <form class="w-75 mx-auto mt-4" action="/songs/edit" method="post">
-          <input type="hidden" class="form-control" required="required" name="id_song" value="<?php echo $id;
-//id skladby
+        <form class="w-75 mx-auto mt-4" action="/albums/edit" method="post">
+          <input type="hidden" class="form-control" required="required" name="id_album" value="<?php echo $id;
+//id alba
 ?>">
           <div class="form-group row">
             <label class="col-2 col-form-label">Název</label>
             <div class="col-10">
-              <input type="text" class="form-control" required="required" name="name_song" value="<?php echo $song[
-                  "name_song"
+              <input type="text" class="form-control" required="required" name="name_album" value="<?php echo $album[
+                  "name_album"
               ];
-//název skladby
+//název alba
 ?>">
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-2 col-form-label">Album</label>
+            <label class="col-2 col-form-label">Typ</label>
             <div class="col-10">
-              <select class="form-control" name="id_album">
+              <select class="form-control" name="id_type">
                 <?php
-                //vygenerování alb
-                while ($row = $albumsResult->fetchArray()) {
+                //vygenerování typů
+                while ($row = $typesResult->fetchArray()) {
                     $selected = "";
-                    //pokud je album vybráno
-                    if ($song["id_album"] == $row["id_album"]) {
+                    //pokud je typ vybrán
+                    if ($album["id_type"] == $row["id_type"]) {
                         $selected = " selected";
                     }
                     echo '<option value="' .
-                        $row["id_album"] .
+                        $row["id_type"] .
                         '"' .
                         $selected .
                         ">" .
-                        $row["name_album"] .
+                        $row["name_type"] .
                         "</option>" .
                         "\n";
                 }
                 ?>
               </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-2 col-form-label">Vydáno</label>
+            <div class="col-10">
+              <!-- https://stackoverflow.com/questions/14212527/how-to-set-default-value-to-the-inputtype-date/14212715#14212715 --->
+              <input type="date" class="form-control" required="required" name="released_album" value="<?php echo convertEpochTimeInput($album["released_album"]);//datum vydání?>">
             </div>
           </div>
           <div class="form-group row">
@@ -146,7 +157,7 @@ if ($count == 1) {
                 while ($row = $interpretsResult->fetchArray()) {
                     $selected = "";
                     //pokud je interpret vybrán
-                    if ($song["id_interpret"] == $row["id_interpret"]) {
+                    if ($album["id_interpret"] == $row["id_interpret"]) {
                         $selected = " selected";
                     }
                     echo '<option value="' .
@@ -162,7 +173,7 @@ if ($count == 1) {
               </select>
             </div>
             <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Aktualizovat</button>
-            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/songs">Zpět</a>
+            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/albums">Zpět</a>
           </div>
         </form>
       </div>

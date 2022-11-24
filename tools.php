@@ -46,4 +46,27 @@ function countRows($result) {
   $result->reset();
   return $count;
 }
+
+//unix čas na human readable https://stackoverflow.com/questions/13477788/convert-epoch-time-to-date-php/13477883#13477883
+function convertEpochTime($epoch) {
+  $datetime = new DateTime("@$epoch");
+  $text = $datetime->format("d.m. Y");
+  return $text;
+}
+
+//unix čas pro html input
+function convertEpochTimeInput($epoch) {
+  $datetime = new DateTime("@$epoch");
+  $text = $datetime->format("Y-m-d");
+  return $text;
+}
+
+//postnuté datum z formuláře na unix čas
+//https://www.geeksforgeeks.org/php-datetime-createfromformat-function/
+//https://www.php.net/manual/en/datetime.gettimestamp.php
+function convertYmdToEpochTime($input) {
+  $datetime = DateTime::createFromFormat("Y-m-d", $input);
+  $epoch = $datetime->getTimestamp();
+  return $epoch;
+}
 ?>
