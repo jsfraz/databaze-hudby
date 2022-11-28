@@ -1,7 +1,7 @@
 <?php
-//editace alba
+//editace skladby
 
-//Oprava chyby "Cannot modify header information" při aktualizování alba, funguje a nevím proč. Zázrak.
+//Oprava chyby "Cannot modify header information" při smazání skladby, funguje a nevím proč. Zázrak.
 //https://stackoverflow.com/questions/6974691/php-page-redirect-problem-cannot-modify-header-information
 ob_start();
 

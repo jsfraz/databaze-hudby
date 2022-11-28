@@ -5,9 +5,14 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 //GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
-        preg_match("/\/songs\/edit\?id_song=[0-9]+/i", $_SERVER["REQUEST_URI"]) == false
+        preg_match(
+            "/\/songs\/edit\?id_song=[0-9]+/",
+            $_SERVER["REQUEST_URI"]
+        ) == false
     ) {
-        exit();
+        $errorTitle = "Chyba";
+        $errorText = "Neplatný požadavek.";
+        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
 }
 //POST
@@ -21,12 +26,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $songCount; //skladby
     $albumCount; //alba
     $interpretCount; //interpreti
-    //valdiace
+    //validace
     if (
-        empty($id) == false &&
-        empty($name) == false &&
-        empty($album) == false &&
-        empty($interpret) == false
+        preg_match("/[0-9]+/", $id) &&
+        preg_match('#^[^"\']+$#', $name) &&
+        preg_match("/[0-9]+/", $album) &&
+        preg_match("/[0-9]+/", $interpret)
     ) {
         $songCount = querySqlSingle(
             "SELECT COUNT(*) FROM songs WHERE id_song = " . $id . ";"
@@ -57,10 +62,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($success) {
                 header("Location: /songs/edit?id_song=" . $id);
+            } else {
+                $errorTitle = "Chyba";
+                $errorText = "Skladbu se nepodařilo aktualizovat.";
+                include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
             }
+        } else {
+            $errorTitle = "Chyba";
+            $errorText = "Neplatný požadavek.";
+            include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
         }
+    } else {
+        $errorTitle = "Chyba";
+        $errorText = "Neplatný požadavek.";
+        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
-    
     exit();
 }
 
@@ -82,15 +98,15 @@ if ($count == 1) {
         $song = $row;
     }
     //alba
-                $albumsResult = querySql(
-                    "SELECT id_album, name_album FROM albums;"
-                );
+    $albumsResult = querySql("SELECT id_album, name_album FROM albums;");
     //interpreti
     $interpretsResult = querySql(
         "SELECT id_interpret, name_interpret FROM interprets;"
     );
 } else {
-    exit();
+    $errorTitle = "Chyba";
+    $errorText = "Skladba v databázi neexistuje.";
+    include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
 }
 ?>
 
@@ -99,25 +115,24 @@ if ($count == 1) {
     <div class="row mx-auto">
       <div class="col-md-12">
         <form class="w-75 mx-auto mt-4" action="/songs/edit" method="post">
-          <input type="hidden" class="form-control" required="required" name="id_song" value="<?php echo $id;
+          <input type="hidden" class="form-control" name="id_song" value="<?php echo $id;
 //id skladby
-?>">
+?>" required>
           <div class="form-group row">
             <label class="col-2 col-form-label">Název</label>
             <div class="col-10">
-              <input type="text" class="form-control" required="required" name="name_song" value="<?php echo $song[
+              <input type="text" class="form-control" name="name_song" value="<?php echo $song[
                   "name_song"
               ];
 //název skladby
-?>">
+?>" required>
             </div>
           </div>
           <div class="form-group row">
             <label class="col-2 col-form-label">Album</label>
             <div class="col-10">
-              <select class="form-control" name="id_album">
-                <?php
-                //vygenerování alb
+              <select class="form-control" name="id_album" required>
+                <?php //vygenerování alb
                 while ($row = $albumsResult->fetchArray()) {
                     $selected = "";
                     //pokud je album vybráno
@@ -132,17 +147,15 @@ if ($count == 1) {
                         $row["name_album"] .
                         "</option>" .
                         "\n";
-                }
-                ?>
+                } ?>
               </select>
             </div>
           </div>
           <div class="form-group row">
             <label class="col-2 col-form-label">Interpret</label>
             <div class="col-10">
-              <select class="form-control" name="id_interpret">
-                <?php
-                //vygenerování interpretů
+              <select class="form-control" name="id_interpret" required>
+                <?php //vygenerování interpretů
                 while ($row = $interpretsResult->fetchArray()) {
                     $selected = "";
                     //pokud je interpret vybrán
@@ -157,8 +170,7 @@ if ($count == 1) {
                         $row["name_interpret"] .
                         "</option>" .
                         "\n";
-                }
-                ?>
+                } ?>
               </select>
             </div>
             <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Aktualizovat</button>

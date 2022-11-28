@@ -29,9 +29,8 @@ if ($_SERVER["REQUEST_URI"] != "/albums") {
 
               //dotaz na všechny skladby
               $result = querySql(
-                  "SELECT id_album, name_album, name_type, released_album, name_interpret FROM albums INNER JOIN album_types ON albums.id_type = album_types.id_type INNER JOIN interprets ON albums.id_interpret = interprets.id_interpret;"
+                  "SELECT id_album, name_album, name_type, released_album, name_interpret FROM albums LEFT JOIN album_types ON albums.id_type = album_types.id_type LEFT JOIN interprets ON albums.id_interpret = interprets.id_interpret;"
               );
-//FIXME albums.type_id
 
               //kontrola počtu řádků
               if (countRows($result) > 0) {
@@ -58,6 +57,14 @@ if ($_SERVER["REQUEST_URI"] != "/albums") {
               </div>';
                   //vypsání skladeb
                   while ($row = $result->fetchArray()) {
+                    //sloupeček se jménem interpreta
+                    $interpretColumn;
+                    if (empty($row["name_interpret"])) {
+                      $interpretColumn = '<div class="col-md-3"><h5></h5></div>';
+                    } else {
+                      $interpretColumn = '<a class="col-md-3" href="/"><h5>' . $row["name_interpret"] . '</h5></a>';
+                    }
+                    
                     echo '<div class="list-group-item text-center">
                 <div class="row">
                 <div class="col-md-3">
@@ -74,19 +81,15 @@ if ($_SERVER["REQUEST_URI"] != "/albums") {
                   <h5>' .
                           convertEpochTime($row["released_album"]) .
                           '</h5>
-                </div>
-                <a class="col-md-3" href="/">
-                  <h5>' .
-                          $row["name_interpret"] .
-                          '</h5>
-                </a>
-                <div class="col-md-1" >
+                </div>' .
+                $interpretColumn .
+                '<div class="col-md-1" >
                   <div class="row">
                     <div class="col-md-6">
                       <a href="/albums/edit?id_album=' . $row["id_album"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
-                      <form action="/albums/edit/delete.php" method="post">
+                      <form action="/albums/edit/delete" method="post">
                          <input type="hidden" required="required" name="id_album" value="' . $row["id_album"] . '">
                         <button class="transparent-btn" type="submit"><i class="fa fa-2x fa-trash text-danger"></i></button>
                       </form>

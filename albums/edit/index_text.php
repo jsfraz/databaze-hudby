@@ -5,9 +5,14 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 //GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
-        preg_match("/\/albums\/edit\?id_album=[0-9]+/i", $_SERVER["REQUEST_URI"]) == false
+        preg_match(
+            "/\/albums\/edit\?id_album=[0-9]+/",
+            $_SERVER["REQUEST_URI"]
+        ) == false
     ) {
-        exit();
+        $errorTitle = "Chyba";
+        $errorText = "Neplatný požadavek.";
+        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
 }
 //POST
@@ -22,13 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $albumCount; //alba
     $typeCount; //typy alb
     $interpretCount; //interpreti
-    //valdiace
+    //validace
+    //https://stackoverflow.com/questions/3011383/preg-match-unknown-modifier-help
     if (
-        empty($id) == false &&
-        empty($name) == false &&
-        empty($type) == false &&
-        empty($released) == false &&
-        empty($interpret) == false
+        preg_match("/[0-9]+/", $id) &&
+        preg_match('#^[^"\']+$#', $name) &&
+        preg_match("/[0-9]+/", $type) &&
+        isValidYmd($released) &&
+        preg_match("/[0-9]+/", $interpret)
     ) {
         $albumCount = querySqlSingle(
             "SELECT COUNT(*) FROM albums WHERE id_album = " . $id . ";"
@@ -61,8 +67,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if ($success) {
                 header("Location: /albums/edit?id_album=" . $id);
+            } else {
+                $errorTitle = "Chyba";
+                $errorText = "Album se nepodařilo aktualizovat.";
+                include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
             }
+        } else {
+            $errorTitle = "Chyba";
+            $errorText = "Neplatný požadavek.";
+            include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
         }
+    } else {
+        $errorTitle = "Chyba";
+        $errorText = "Neplatný požadavek.";
+        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
 
     exit();
@@ -86,15 +104,15 @@ if ($count == 1) {
         $album = $row;
     }
     //typy alb
-    $typesResult = querySql(
-        "SELECT id_type, name_type FROM album_types;"
-    );
+    $typesResult = querySql("SELECT id_type, name_type FROM album_types;");
     //interpreti
     $interpretsResult = querySql(
         "SELECT id_interpret, name_interpret FROM interprets;"
     );
 } else {
-    exit();
+    $errorTitle = "Chyba";
+    $errorText = "Album v databázi neexistuje.";
+    include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
 }
 ?>
 
@@ -103,25 +121,24 @@ if ($count == 1) {
     <div class="row mx-auto">
       <div class="col-md-12">
         <form class="w-75 mx-auto mt-4" action="/albums/edit" method="post">
-          <input type="hidden" class="form-control" required="required" name="id_album" value="<?php echo $id;
+          <input type="hidden" class="form-control" name="id_album" value="<?php echo $id;
 //id alba
-?>">
+?>" required>
           <div class="form-group row">
             <label class="col-2 col-form-label">Název</label>
             <div class="col-10">
-              <input type="text" class="form-control" required="required" name="name_album" value="<?php echo $album[
+              <input type="text" class="form-control" name="name_album" value="<?php echo $album[
                   "name_album"
               ];
 //název alba
-?>">
+?>" required>
             </div>
           </div>
           <div class="form-group row">
             <label class="col-2 col-form-label">Typ</label>
             <div class="col-10">
-              <select class="form-control" name="id_type">
-                <?php
-                //vygenerování typů
+              <select class="form-control" name="id_type" required>
+                <?php //vygenerování typů
                 while ($row = $typesResult->fetchArray()) {
                     $selected = "";
                     //pokud je typ vybrán
@@ -136,8 +153,7 @@ if ($count == 1) {
                         $row["name_type"] .
                         "</option>" .
                         "\n";
-                }
-                ?>
+                } ?>
               </select>
             </div>
           </div>
@@ -145,15 +161,18 @@ if ($count == 1) {
             <label class="col-2 col-form-label">Vydáno</label>
             <div class="col-10">
               <!-- https://stackoverflow.com/questions/14212527/how-to-set-default-value-to-the-inputtype-date/14212715#14212715 --->
-              <input type="date" class="form-control" required="required" name="released_album" value="<?php echo convertEpochTimeInput($album["released_album"]);//datum vydání?>">
+              <input type="date" class="form-control" name="released_album" value="<?php echo convertEpochTimeInput(
+                  $album["released_album"]
+              );
+//datum vydání
+?>" required>
             </div>
           </div>
           <div class="form-group row">
             <label class="col-2 col-form-label">Interpret</label>
             <div class="col-10">
-              <select class="form-control" name="id_interpret">
-                <?php
-                //vygenerování interpretů
+              <select class="form-control" name="id_interpret" required>
+                <?php //vygenerování interpretů
                 while ($row = $interpretsResult->fetchArray()) {
                     $selected = "";
                     //pokud je interpret vybrán
@@ -168,8 +187,7 @@ if ($count == 1) {
                         $row["name_interpret"] .
                         "</option>" .
                         "\n";
-                }
-                ?>
+                } ?>
               </select>
             </div>
             <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Aktualizovat</button>

@@ -69,4 +69,26 @@ function convertYmdToEpochTime($input) {
   $epoch = $datetime->getTimestamp();
   return $epoch;
 }
+
+/*
+//validace unix času
+//https://stackoverflow.com/questions/10724034/how-to-validate-unix-time-with-regexp-on-php
+function isUnixTime($t) {
+  if (is_numeric($t) && 0<$t && $t<strtotime("2038")) {
+    return true;
+  } else {
+    return false;
+  }
+}
+*/
+
+//validace data z Y-m-d formátu
+//https://stackoverflow.com/questions/11029769/function-to-check-if-a-string-is-a-date
+function isValidYmd($input) {
+  if (DateTime::createFromFormat("Y-m-d", $input) !== false) {
+    return true;
+  } else {
+    return false;
+  }
+}
 ?>

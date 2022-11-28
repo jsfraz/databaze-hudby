@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_URI"] != "/songs") {
 
               //dotaz na všechny skladby
               $result = querySql(
-                  "SELECT id_song, name_song, name_album, name_interpret FROM songs INNER JOIN albums ON songs.id_album = albums.id_album INNER JOIN interprets ON songs.id_interpret = interprets.id_interpret;"
+                  "SELECT id_song, name_song, name_album, name_interpret FROM songs LEFT JOIN albums ON songs.id_album = albums.id_album LEFT JOIN interprets ON songs.id_interpret = interprets.id_interpret;"
               );
 
               //kontrola počtu řádků
@@ -54,30 +54,37 @@ if ($_SERVER["REQUEST_URI"] != "/songs") {
               </div>';
                   //vypsání skladeb
                   while ($row = $result->fetchArray()) {
+                    //sloupeček se jménem alba
+                    $albumColumn;
+                    if (empty($row["name_album"])) {
+                      $albumColumn = '<div class="col-md-4"><h5></h5></div>';
+                    } else {
+                      $albumColumn = '<a class="col-md-4" href="/"><h5>' . $row["name_album"] . '</h5></a>';
+                    }
+                    //sloupeček se jménem interpreta
+                    $interpretColumn;
+                    if (empty($row["name_interpret"])) {
+                      $interpretColumn = '<div class="col-md-3"><h5></h5></div>';
+                    } else {
+                      $interpretColumn = '<a class="col-md-3" href="/"><h5>' . $row["name_interpret"] . '</h5></a>';
+                    }
+                    
                       echo '<div class="list-group-item text-center">
                 <div class="row">
                 <div class="col-md-4">
                   <h5>' .
                           $row["name_song"] .
                           '</h5>
-                </div>
-                <a class="col-md-4" href="/">
-                  <h5>' .
-                          $row["name_album"] .
-                          '</h5>
-                </a>
-                <a class="col-md-3" href="/">
-                  <h5>' .
-                          $row["name_interpret"] .
-                          '</h5>
-                </a>
-                <div class="col-md-1" >
+                </div>' .
+                $albumColumn .
+                $interpretColumn .
+                '<div class="col-md-1">
                   <div class="row">
                     <div class="col-md-6">
                       <a href="/songs/edit?id_song=' . $row["id_song"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
-                      <form action="/songs/edit/delete.php" method="post">
+                      <form action="/songs/edit/delete" method="post">
                          <input type="hidden" required="required" name="id_song" value="' . $row["id_song"] . '">
                         <button class="transparent-btn" type="submit"><i class="fa fa-2x fa-trash text-danger"></i></button>
                       </form>
