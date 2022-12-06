@@ -52,6 +52,7 @@ if ($_SERVER["REQUEST_URI"] != "/albums") {
                   <h4>INTERPRET</h4>
                 </div>
                 <div class="col-md-1">
+                  <a href="/albums/insert"><i class="fa fa-2x fa-plus text-light"></i></a>
                 </div>
               </div>
               </div>';
@@ -89,7 +90,7 @@ if ($_SERVER["REQUEST_URI"] != "/albums") {
                       <a href="/albums/edit?id_album=' . $row["id_album"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
-                      <form action="/albums/edit/delete" method="post">
+                      <form action="/albums/delete" method="post">
                          <input type="hidden" required="required" name="id_album" value="' . $row["id_album"] . '">
                         <button class="transparent-btn" type="submit"><i class="fa fa-2x fa-trash text-danger"></i></button>
                       </form>

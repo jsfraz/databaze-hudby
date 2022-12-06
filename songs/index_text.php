@@ -49,6 +49,7 @@ if ($_SERVER["REQUEST_URI"] != "/songs") {
                   <h4>Interpret</h4>
                 </div>
                 <div class="col-md-1">
+                  <a href="/songs/insert"><i class="fa fa-2x fa-plus text-light"></i></a>
                 </div>
               </div>
               </div>';
@@ -84,7 +85,7 @@ if ($_SERVER["REQUEST_URI"] != "/songs") {
                       <a href="/songs/edit?id_song=' . $row["id_song"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
-                      <form action="/songs/edit/delete" method="post">
+                      <form action="/songs/delete" method="post">
                          <input type="hidden" required="required" name="id_song" value="' . $row["id_song"] . '">
                         <button class="transparent-btn" type="submit"><i class="fa fa-2x fa-trash text-danger"></i></button>
                       </form>
