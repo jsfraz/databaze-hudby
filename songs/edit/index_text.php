@@ -173,9 +173,9 @@ if ($count == 1) {
                 } ?>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Aktualizovat</button>
-            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/songs">Zpět</a>
           </div>
+          <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Aktualizovat</button>
+            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/songs">Zpět</a>
         </form>
       </div>
     </div>

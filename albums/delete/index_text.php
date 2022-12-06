@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($count == 1) {
             //smazání
             querySqlExec("DELETE FROM albums WHERE id_album = " . $id . ";");
+            querySqlExec("DELETE FROM album_genres WHERE id_album = " . $id . ";");
             querySqlExec("UPDATE songs SET id_album = NULL WHERE id_album = " . $id . ";");
             header("Location: /albums");
             exit();

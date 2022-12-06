@@ -13,16 +13,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $type = $_POST["id_type"];
     $released = $_POST["released_album"];
     $interpret = $_POST["id_interpret"];
+    $genreIds = $_POST["ids_genres"];
 
     $albumCount; //alba
+    $typeCount; //typy alb
     $interpretCount; //interpreti
     //validace
-   //https://stackoverflow.com/questions/3011383/preg-match-unknown-modifier-help
+    //https://stackoverflow.com/questions/3011383/preg-match-unknown-modifier-help
     if (
         preg_match('#^[^"\']+$#', $name) &&
         preg_match("/[0-9]+/", $type) &&
         isValidYmd($released) &&
-        preg_match("/[0-9]+/", $interpret)
+        preg_match("/[0-9]+/", $interpret) &&
+        empty($genreIds) == false
     ) {
         $typeCount = querySqlSingle(
             "SELECT COUNT(*) FROM album_types WHERE id_type = " . $type . ";"
@@ -32,17 +35,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $interpret .
                 ";"
         );
+        $validGenres = true;
+        for ($i = 0; $i < count($genreIds); $i++) {
+            $count = querySqlSingle(
+                "SELECT COUNT(*) FROM genres WHERE id_genre = " .
+                    $genreIds[$i] .
+                    ";"
+            );
+            if ($count != 1) {
+                $validGenres = false;
+                break;
+            }
+        }
 
         //pokud existují
-        if ($typeCount == 1 && $interpretCount == 1) {
+        if ($typeCount == 1 && $interpretCount == 1 && $validGenres) {
             //aktualizace
             $db = getSqliteConnection();
-            $success = querySqlExecCustom($db , "INSERT INTO albums (name_album, id_type, released_album, id_interpret) VALUES ('" . $name . "', " . $type . ", " . convertYmdToEpochTime($released) . ", " . $interpret . ");");
+            $success = querySqlExecCustom(
+                $db,
+                "INSERT INTO albums (name_album, id_type, released_album, id_interpret) VALUES ('" .
+                    $name .
+                    "', " .
+                    $type .
+                    ", " .
+                    convertYmdToEpochTime($released) .
+                    ", " .
+                    $interpret .
+                    ");"
+            );
+            $id = $db->lastInsertRowId();
+            if ($success) {
+              for ($i = 0; $i < count($genreIds); $i++) {
+                    $success = querySqlExec(
+                        "INSERT INTO album_genres (id_album, id_genre) VALUES (" .
+                            $id .
+                            ", " .
+                            $genreIds[$i] .
+                            ");"
+                    );
+                    if ($success == false) {
+                        break;
+                    }
+                }
+            }
 
             if ($success) {
-              //id posledního vloženého řádku: https://stackoverflow.com/questions/8892973/how-to-get-last-insert-id-in-sqlite
-              $id = $db->lastInsertRowId();
-              header("Location: /albums/edit?id_album=" . $id);
+                //id posledního vloženého řádku: https://stackoverflow.com/questions/8892973/how-to-get-last-insert-id-in-sqlite
+                header("Location: /albums/edit?id_album=" . $id);
             } else {
                 $errorTitle = "Chyba";
                 $errorText = "Nepodařilo se přidat album.";
@@ -58,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errorText = "Neplatný požadavek.";
         include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
-  exit();
+    exit();
 }
 
 //typy
@@ -67,6 +107,8 @@ $typesResult = querySql("SELECT id_type, name_type FROM album_types;");
 $interpretsResult = querySql(
     "SELECT id_interpret, name_interpret FROM interprets;"
 );
+//žánry alb
+$genresResult = querySql("SELECT id_genre, name_genre FROM genres;");
 ?>
 
 <div class="py-5 section-fade-in h-100" style="background-image: url(/images/nirvana.jpg);	background-position: center;	background-size: cover;	background-repeat: no-repeat;">
@@ -120,9 +162,28 @@ while ($row = $interpretsResult->fetchArray()) {
                 } ?>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Přidat</button>
-            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/albums">Zpět</a>
           </div>
+          <div class="form-group row">
+            <label class="col-2 col-form-label">Žánry</label>
+            <div class="col-10">
+              <select class="form-control" name="ids_genres[]" multiple required>
+                <?php //vygenerování žánrů
+
+while ($row = $genresResult->fetchArray()) {
+                    echo '<option value="' .
+                        $row["id_genre"] .
+                        '"' .
+                        $selected .
+                        ">" .
+                        $row["name_genre"] .
+                        "</option>" .
+                        "\n";
+                } ?>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Přidat</button>
+            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/albums">Zpět</a>
         </form>
       </div>
     </div>

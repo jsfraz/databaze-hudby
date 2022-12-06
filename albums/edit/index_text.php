@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $type = $_POST["id_type"];
     $released = $_POST["released_album"];
     $interpret = $_POST["id_interpret"];
+    $genreIds = $_POST["ids_genres"];
 
     $albumCount; //alba
     $typeCount; //typy alb
@@ -34,7 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         preg_match('#^[^"\']+$#', $name) &&
         preg_match("/[0-9]+/", $type) &&
         isValidYmd($released) &&
-        preg_match("/[0-9]+/", $interpret)
+        preg_match("/[0-9]+/", $interpret) &&
+        empty($genreIds) == false
     ) {
         $albumCount = querySqlSingle(
             "SELECT COUNT(*) FROM albums WHERE id_album = " . $id . ";"
@@ -47,9 +49,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $interpret .
                 ";"
         );
+        $validGenres = true;
+        for ($i = 0; $i < count($genreIds); $i++) {
+            $count = querySqlSingle(
+                "SELECT COUNT(*) FROM genres WHERE id_genre = " .
+                    $genreIds[$i] .
+                    ";"
+            );
+            if ($count != 1) {
+                $validGenres = false;
+                break;
+            }
+        }
 
         //pokud existují
-        if ($albumCount == 1 && $typeCount == 1 && $interpretCount == 1) {
+        if (
+            $albumCount == 1 &&
+            $typeCount == 1 &&
+            $interpretCount == 1 &&
+            $validGenres
+        ) {
             //aktualizace
             $success = querySqlExec(
                 "UPDATE albums SET name_album = '" .
@@ -64,6 +83,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $id .
                     ";"
             );
+            if ($success) {
+                $success = querySqlExec(
+                    "DELETE FROM album_genres WHERE id_album = " . $id . ";"
+                );
+            }
+            if ($success) {
+                for ($i = 0; $i < count($genreIds); $i++) {
+                    $success = querySqlExec(
+                        "INSERT INTO album_genres (id_album, id_genre) VALUES (" .
+                            $id .
+                            ", " .
+                            $genreIds[$i] .
+                            ");"
+                    );
+                    if ($success == false) {
+                        break;
+                    }
+                }
+            }
 
             if ($success) {
                 header("Location: /albums/edit?id_album=" . $id);
@@ -103,12 +141,22 @@ if ($count == 1) {
     while ($row = $albumResult->fetchArray()) {
         $album = $row;
     }
+    //žánry alba
+    $albumGenresResult = querySql(
+        "SELECT id_genre FROM album_genres WHERE id_album = " . $id . ";"
+    );
+    $genres = [];
+    while ($row = $albumGenresResult->fetchArray()) {
+        array_push($genres, $row["id_genre"]);
+    }
     //typy alb
     $typesResult = querySql("SELECT id_type, name_type FROM album_types;");
     //interpreti
     $interpretsResult = querySql(
         "SELECT id_interpret, name_interpret FROM interprets;"
     );
+    //žánry alb
+    $genresResult = querySql("SELECT id_genre, name_genre FROM genres;");
 } else {
     $errorTitle = "Chyba";
     $errorText = "Album v databázi neexistuje.";
@@ -139,7 +187,8 @@ if ($count == 1) {
             <div class="col-10">
               <select class="form-control" name="id_type" required>
                 <?php //vygenerování typů
-                while ($row = $typesResult->fetchArray()) {
+
+while ($row = $typesResult->fetchArray()) {
                     $selected = "";
                     //pokud je typ vybrán
                     if ($album["id_type"] == $row["id_type"]) {
@@ -173,7 +222,8 @@ if ($count == 1) {
             <div class="col-10">
               <select class="form-control" name="id_interpret" required>
                 <?php //vygenerování interpretů
-                while ($row = $interpretsResult->fetchArray()) {
+
+while ($row = $interpretsResult->fetchArray()) {
                     $selected = "";
                     //pokud je interpret vybrán
                     if ($album["id_interpret"] == $row["id_interpret"]) {
@@ -190,9 +240,33 @@ if ($count == 1) {
                 } ?>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Aktualizovat</button>
-            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/albums">Zpět</a>
           </div>
+          <div class="form-group row">
+            <label class="col-2 col-form-label">Žánry</label>
+            <div class="col-10">
+              <select class="form-control" name="ids_genres[]" multiple required>
+                <?php //vygenerování žánrů
+
+while ($row = $genresResult->fetchArray()) {
+                    $selected = "";
+                    //pokud je žánr vybrán
+                    if (in_array($row["id_genre"], $genres)) {
+                        $selected = " selected";
+                    }
+                    echo '<option value="' .
+                        $row["id_genre"] .
+                        '"' .
+                        $selected .
+                        ">" .
+                        $row["name_genre"] .
+                        "</option>" .
+                        "\n";
+                } ?>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary ml-auto mt-3 mr-2" >Aktualizovat</button>
+            <a class="btn btn-primary ml-2 mr-auto mt-3" href="/albums">Zpět</a>
         </form>
       </div>
     </div>
