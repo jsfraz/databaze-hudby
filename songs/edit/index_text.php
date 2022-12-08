@@ -6,7 +6,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
         preg_match(
-            "/\/songs\/edit\?id_song=[0-9]+/",
+            "/\/songs\/edit\?id_song=[0-9]+$/",
             $_SERVER["REQUEST_URI"]
         ) == false
     ) {
@@ -28,10 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $interpretCount; //interpreti
     //validace
     if (
-        preg_match("/[0-9]+/", $id) &&
+        preg_match("/[0-9]+$/", $id) &&
         preg_match('#^[^"\']+$#', $name) &&
-        preg_match("/[0-9]+/", $album) &&
-        preg_match("/[0-9]+/", $interpret)
+        preg_match("/[0-9]+$/", $album) &&
+        preg_match("/[0-9]+$/", $interpret)
     ) {
         $songCount = querySqlSingle(
             "SELECT COUNT(*) FROM songs WHERE id_song = " . $id . ";"

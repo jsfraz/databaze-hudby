@@ -6,7 +6,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
         preg_match(
-            "/\/albums\/edit\?id_album=[0-9]+/",
+            "/\/albums\/edit\?id_album=[0-9]+$/",
             $_SERVER["REQUEST_URI"]
         ) == false
     ) {
@@ -31,11 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //validace
     //https://stackoverflow.com/questions/3011383/preg-match-unknown-modifier-help
     if (
-        preg_match("/[0-9]+/", $id) &&
+        preg_match("/[0-9]+$/", $id) &&
         preg_match('#^[^"\']+$#', $name) &&
-        preg_match("/[0-9]+/", $type) &&
+        preg_match("/[0-9]+$/", $type) &&
         isValidYmd($released) &&
-        preg_match("/[0-9]+/", $interpret) &&
+        preg_match("/[0-9]+$/", $interpret) &&
         empty($genreIds) == false
     ) {
         $albumCount = querySqlSingle(

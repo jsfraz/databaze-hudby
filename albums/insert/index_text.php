@@ -22,9 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //https://stackoverflow.com/questions/3011383/preg-match-unknown-modifier-help
     if (
         preg_match('#^[^"\']+$#', $name) &&
-        preg_match("/[0-9]+/", $type) &&
+        preg_match("/[0-9]+$/", $type) &&
         isValidYmd($released) &&
-        preg_match("/[0-9]+/", $interpret) &&
+        preg_match("/[0-9]+$/", $interpret) &&
         empty($genreIds) == false
     ) {
         $typeCount = querySqlSingle(

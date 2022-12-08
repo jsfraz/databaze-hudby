@@ -1,8 +1,22 @@
 <?php
-if ($_SERVER["REQUEST_URI"] != "/songs") {
-    exit();
-}
-?>
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (
+        preg_match(
+            "/\/songs(.{0}|\?order=(id_song|name_song|name_album|name_interpret)&mode=(asc|desc))$/",
+            $_SERVER["REQUEST_URI"]
+        ) == false
+    ) {
+        $errorTitle = "Chyba";
+        $errorText = "Neplatný požadavek.";
+        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
+    }
+  
+    $order = "id_song asc";
+    //parametry pro řazení nejsou prázdné
+    if (preg_match("/\/songs\?order=(id_song|name_song|name_album|name_interpret)&mode=(asc|desc)$/", $_SERVER["REQUEST_URI"])) {
+      $order = $_GET["order"] . " " . $_GET["mode"];
+    }
+} ?>
 
 <!-- duhové pozadí https://stackoverflow.com/questions/56418763/creating-the-perfect-rainbow-gradient-in-css/63302468#63302468 --->
 <div class="align-items-center cover py-5" style="	background-image: linear-gradient(
@@ -25,11 +39,13 @@ if ($_SERVER["REQUEST_URI"] != "/songs") {
           <div class="list-group mt-4">
               <?php
               //nástroje
-              require_once $_SERVER['DOCUMENT_ROOT'] . "/tools.php";
+              require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 
               //dotaz na všechny skladby
               $result = querySql(
-                  "SELECT id_song, name_song, name_album, name_interpret FROM songs LEFT JOIN albums ON songs.id_album = albums.id_album LEFT JOIN interprets ON songs.id_interpret = interprets.id_interpret;"
+                  "SELECT id_song, name_song, name_album, name_interpret FROM songs LEFT JOIN albums ON songs.id_album = albums.id_album LEFT JOIN interprets ON songs.id_interpret = interprets.id_interpret ORDER BY " .
+                      $order .
+                      ";"
               );
 
               //kontrola počtu řádků
@@ -55,21 +71,29 @@ if ($_SERVER["REQUEST_URI"] != "/songs") {
               </div>';
                   //vypsání skladeb
                   while ($row = $result->fetchArray()) {
-                    //sloupeček se jménem alba
-                    $albumColumn;
-                    if (empty($row["name_album"])) {
-                      $albumColumn = '<div class="col-md-4"><h5></h5></div>';
-                    } else {
-                      $albumColumn = '<a class="col-md-4" href="/"><h5>' . $row["name_album"] . '</h5></a>';
-                    }
-                    //sloupeček se jménem interpreta
-                    $interpretColumn;
-                    if (empty($row["name_interpret"])) {
-                      $interpretColumn = '<div class="col-md-3"><h5></h5></div>';
-                    } else {
-                      $interpretColumn = '<a class="col-md-3" href="/"><h5>' . $row["name_interpret"] . '</h5></a>';
-                    }
-                    
+                      //sloupeček se jménem alba
+                      $albumColumn;
+                      if (empty($row["name_album"])) {
+                          $albumColumn =
+                              '<div class="col-md-4"><h5></h5></div>';
+                      } else {
+                          $albumColumn =
+                              '<a class="col-md-4" href="/"><h5>' .
+                              $row["name_album"] .
+                              "</h5></a>";
+                      }
+                      //sloupeček se jménem interpreta
+                      $interpretColumn;
+                      if (empty($row["name_interpret"])) {
+                          $interpretColumn =
+                              '<div class="col-md-3"><h5></h5></div>';
+                      } else {
+                          $interpretColumn =
+                              '<a class="col-md-3" href="/"><h5>' .
+                              $row["name_interpret"] .
+                              "</h5></a>";
+                      }
+
                       echo '<div class="list-group-item text-center">
                 <div class="row">
                 <div class="col-md-4">
@@ -77,16 +101,20 @@ if ($_SERVER["REQUEST_URI"] != "/songs") {
                           $row["name_song"] .
                           '</h5>
                 </div>' .
-                $albumColumn .
-                $interpretColumn .
-                '<div class="col-md-1">
+                          $albumColumn .
+                          $interpretColumn .
+                          '<div class="col-md-1">
                   <div class="row">
                     <div class="col-md-6">
-                      <a href="/songs/edit?id_song=' . $row["id_song"] . '"><i class="fa fa-2x fa-pencil text-light"></i></a>
+                      <a href="/songs/edit?id_song=' .
+                          $row["id_song"] .
+                          '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
                       <form action="/songs/delete" method="post">
-                         <input type="hidden" required="required" name="id_song" value="' . $row["id_song"] . '">
+                         <input type="hidden" required="required" name="id_song" value="' .
+                          $row["id_song"] .
+                          '">
                         <button class="transparent-btn" type="submit"><i class="fa fa-2x fa-trash text-danger"></i></button>
                       </form>
                     </div>

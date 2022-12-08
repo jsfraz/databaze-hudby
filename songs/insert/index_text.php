@@ -18,8 +18,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //validace
     if (
         preg_match('#^[^"\']+$#', $name) &&
-        preg_match("/[0-9]+/", $album) &&
-        preg_match("/[0-9]+/", $interpret)
+        preg_match("/[0-9]+$/", $album) &&
+        preg_match("/[0-9]+$/", $interpret)
     ) {
         $albumCount = querySqlSingle(
             "SELECT COUNT(*) FROM albums WHERE id_album = " . $album . ";"
