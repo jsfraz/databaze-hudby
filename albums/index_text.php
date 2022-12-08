@@ -1,6 +1,21 @@
 <?php
-if ($_SERVER["REQUEST_URI"] != "/albums") {
-    exit();
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+  if (
+        preg_match(
+            "/\/albums(.{0}|\?order=(id_album|name_album|name_type|released_album|name_interpret)&mode=(asc|desc))$/",
+            $_SERVER["REQUEST_URI"]
+        ) == false
+    ) {
+        $errorTitle = "Chyba";
+        $errorText = "Neplatný požadavek.";
+        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
+    }
+  
+    $order = "id_album asc";
+    //parametry pro řazení nejsou prázdné
+    if (preg_match("/\/albums\?order=(id_album|name_album|name_type|released_album|name_interpret)&mode=(asc|desc)$/", $_SERVER["REQUEST_URI"])) {
+      $order = $_GET["order"] . " " . $_GET["mode"];
+    }
 }
 ?>
 
@@ -29,7 +44,7 @@ if ($_SERVER["REQUEST_URI"] != "/albums") {
 
               //dotaz na všechny skladby
               $result = querySql(
-                  "SELECT id_album, name_album, name_type, released_album, name_interpret FROM albums LEFT JOIN album_types ON albums.id_type = album_types.id_type LEFT JOIN interprets ON albums.id_interpret = interprets.id_interpret;"
+                  "SELECT id_album, name_album, name_type, released_album, name_interpret FROM albums LEFT JOIN album_types ON albums.id_type = album_types.id_type LEFT JOIN interprets ON albums.id_interpret = interprets.id_interpret ORDER BY " . $order . ";"
               );
 
               //kontrola počtu řádků
