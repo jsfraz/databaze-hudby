@@ -23,7 +23,7 @@ if (filter_var($email, FILTER_VALIDATE_EMAIL) && empty($message) == false) {
     $text = "Váš e-mail není správný nebo jste odeslali prázdnou zprávu.";
 }
 ?>
-    <div class="py-5 section-fade-in h-100" style="background-image: url(images/nirvana.jpg);	background-position: center;	background-size: cover;	background-repeat: no-repeat;">
+<div class="py-5 section-fade-in h-100" style="background-image: url(images/nirvana.jpg);	background-position: center;	background-size: cover;	background-repeat: no-repeat;">
   <div class="container p-4 my-5">
     <div class="row">
       <div class="col-12">
@@ -35,3 +35,4 @@ if (filter_var($email, FILTER_VALIDATE_EMAIL) && empty($message) == false) {
       </div>
     </div>
   </div>
+</div>
