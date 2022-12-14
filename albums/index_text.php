@@ -17,6 +17,22 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       $order = $_GET["order"] . " " . $_GET["mode"];
     }
 }
+
+function getOrderSelected($column) {
+  if (empty($_GET["order"]) == false) {
+      if ($_GET["order"] == $column) {
+        echo "selected";
+      }
+  }
+}
+
+function getModeSelected($column) {
+  if (empty( $_GET["mode"]) == false) {
+      if ($_GET["mode"] == $column) {
+        echo "selected";
+      }
+  }
+}
 ?>
 
 <!-- duhové pozadí https://stackoverflow.com/questions/56418763/creating-the-perfect-rainbow-gradient-in-css/63302468#63302468 --->
@@ -36,13 +52,45 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     );	background-position: top left;	background-size: 100%;	background-repeat: repeat;">
     <div class="container">
       <div class="row">
+        <div class="col-md-12 text-left">
+          <!-- collapse výběru řazení https://getbootstrap.com/docs/4.0/components/collapse/ --->
+          <a onclick="filterClick('albums_filter_collapse')" data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">Filtry</a>
+          <?php
+          $showFilter = "";
+          if ($_COOKIE["album_filter_collapse"] == "false") {
+            $showFilter = "show";
+          }
+          ?>
+          <div class="collapse <?php echo $showFilter;?>" id="collapse">
+            <form method="get" draggable="true">
+              <label class="col-form-label text-light">Řadit podle</label>
+              <select name="order" class="form-control form-control-sm w-25" draggable="true" required="">
+                <option value="id_album" <?php getOrderSelected("id_album");?>>ID alba</option>
+                <option value="name_album" <?php getOrderSelected("name_album");?>>Název alba</option>
+                <option value="name_type" <?php getOrderSelected("name_type");?>>Typ alba</option>
+                <option value="released_album" <?php getOrderSelected("released_album");?>>Datum vydání</option>
+                <option value="name_interpret" <?php getOrderSelected("name_interpret");?>>Jméno interpreta</option>
+              </select>
+              <label class="col-form-label">Režim</label>
+              <select name="mode" class="form-control form-control-sm w-25" required="">
+                <option value="asc" <?php getModeSelected("asc");?>>Vzestupně</option>
+                <option value="desc" <?php getModeSelected("desc");?>>Sestupně</option>
+              </select>
+              <input type="submit" value="Řadit" class="btn btn-primary mt-2">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
         <div class="col-md-12">
           <div class="list-group mt-4">
               <?php
               //nástroje
-              require_once $_SERVER['DOCUMENT_ROOT'] . "/tools.php";
+              require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 
-              //dotaz na všechny skladby
+              //dotaz na všechny alba
               $result = querySql(
                   "SELECT id_album, name_album, name_type, released_album, name_interpret FROM albums LEFT JOIN album_types ON albums.id_type = album_types.id_type LEFT JOIN interprets ON albums.id_interpret = interprets.id_interpret ORDER BY " . $order . ";"
               );

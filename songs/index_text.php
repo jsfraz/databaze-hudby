@@ -16,7 +16,24 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (preg_match("/\/songs\?order=(id_song|name_song|name_album|name_interpret)&mode=(asc|desc)$/", $_SERVER["REQUEST_URI"])) {
       $order = $_GET["order"] . " " . $_GET["mode"];
     }
-} ?>
+} 
+
+function getOrderSelected($column) {
+  if (empty($_GET["order"]) == false) {
+      if ($_GET["order"] == $column) {
+        echo "selected";
+      }
+  }
+}
+
+function getModeSelected($column) {
+  if (empty( $_GET["mode"]) == false) {
+      if ($_GET["mode"] == $column) {
+        echo "selected";
+      }
+  }
+}
+?>
 
 <!-- duhové pozadí https://stackoverflow.com/questions/56418763/creating-the-perfect-rainbow-gradient-in-css/63302468#63302468 --->
 <div class="align-items-center cover py-5" style="	background-image: linear-gradient(
@@ -33,6 +50,37 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         rgba(251, 7, 217, 0.1) 90%,
         rgba(255, 0, 0, 0.1) 100%
     );	background-position: top left;	background-size: 100%;	background-repeat: repeat;">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-left">
+          <!-- collapse výběru řazení https://getbootstrap.com/docs/4.0/components/collapse/ --->
+          <a onclick="filterClick('songs_filter_collapse')" data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">Filtry</a>
+          <?php
+          $showFilter = "";
+          if ($_COOKIE["songs_filter_collapse"] == "false") {
+            $showFilter = "show";
+          }
+          ?>
+          <div class="collapse <?php echo $showFilter;?>" id="collapse">
+            <form method="get" draggable="true">
+              <label class="col-form-label text-light">Řadit podle</label>
+              <select name="order" class="form-control form-control-sm w-25" draggable="true" required="">
+                <option value="id_song" <?php getOrderSelected("id_song");?>>ID skladby</option>
+                <option value="name_song" <?php getOrderSelected("name_song");?>>Název skladby</option>
+                <option value="name_album" <?php getOrderSelected("name_album");?>>Název alba</option>
+                <option value="name_interpret" <?php getOrderSelected("name_interpret");?>>Jméno interpreta</option>
+              </select>
+              <label class="col-form-label">Režim</label>
+              <select name="mode" class="form-control form-control-sm w-25" required="">
+                <option value="asc" <?php getModeSelected("asc");?>>Vzestupně</option>
+                <option value="desc" <?php getModeSelected("desc");?>>Sestupně</option>
+              </select>
+              <input type="submit" value="Řadit" class="btn btn-primary mt-2">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <div class="row">
         <div class="col-md-12">
