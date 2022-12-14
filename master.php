@@ -4,15 +4,15 @@
     <!-- master šablona podle https://stackoverflow.com/questions/8249220/masterpage-in-php -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>Databáze hudby</title>
-    <link rel="stylesheet" href="css/cookiealert.css">
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="css/neon.css">
-    <script src="js/navbar-ontop.js"></script>
-    <script src="js/animate-in.js"></script>
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/popper-1.14.3.min.js"></script>
-    <script src="js/bootstrap-4.1.3.min.js"></script>
-    <script src="js/cookies.js"></script>
+    <link rel="stylesheet" href="/css/cookiealert.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/neon.css">
+    <script src="/js/navbar-ontop.js"></script>
+    <script src="/js/animate-in.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/popper-1.14.3.min.js"></script>
+    <script src="/js/bootstrap-4.1.3.min.js"></script>
+    <script src="/js/cookies.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
   </head>
   <body onload="initCookies();" class="text-center">
@@ -88,6 +88,6 @@
     <!-- END Bootstrap-Cookie-Alert -->
     
     <!-- Bootstrap-Cookie-Alert skript -->
-    <script src="js/cookiealert.js"></script>
+    <script src="/js/cookiealert.js"></script>
   </body>
 </html>
