@@ -5,8 +5,8 @@ if ($_SERVER["REQUEST_URI"] != "/") {
 ?>
 
 <?php
-$x = rand(1,10);
-echo '<div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(images/index/index_cover' . $x . '.jpg);">';
+$x = rand(1,25);
+echo '<div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(images/index/' . $x . '.jpg);">';
 ?>
   <div class="container">
     <div class="row">
