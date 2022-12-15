@@ -12,7 +12,7 @@
     <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/popper-1.14.3.min.js"></script>
     <script src="/js/bootstrap-4.1.3.min.js"></script>
-    <script src="/js/cookies.js"></script>
+    <script type="text/javascript" src="/js/cookies.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
   </head>
   <body onload="initCookies();" class="text-center">
@@ -45,7 +45,8 @@
     </nav>
     <!-- konec headeru-->
     
-    <!-- stránka--> <?php include($content); ?>
+    <!-- stránka-->
+    <?php include($content); ?>
 
     <!-- začátek footeru-->
     <footer class="text-md-left text-center p-4">

@@ -1,4 +1,7 @@
 <?php
+//nástroje
+require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
+
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
         preg_match(
@@ -10,28 +13,52 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $errorText = "Neplatný požadavek.";
         include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
-  
-    $order = "id_song asc";
-    //parametry pro řazení nejsou prázdné
-    if (preg_match("/\/songs\?order=(id_song|name_song|name_album|name_interpret)&mode=(asc|desc)$/", $_SERVER["REQUEST_URI"])) {
-      $order = $_GET["order"] . " " . $_GET["mode"];
-    }
-} 
 
-function getOrderSelected($column) {
-  if (empty($_GET["order"]) == false) {
-      if ($_GET["order"] == $column) {
-        echo "selected";
-      }
-  }
+    $order = "id_song";
+    $orderMode = "asc";
+    //order
+    if (empty($_GET["order"]) == false) {
+        $order = $_GET["order"];
+        setCustomCookie("songs_order", $order);
+    } else {
+        if (empty($_COOKIE["songs_order"]) == false) {
+            if (
+                preg_match(
+                    "/^(id_song|name_song|name_album|name_interpret)$/",
+                    $_COOKIE["songs_order"]
+                )
+            ) {
+                $order = $_COOKIE["songs_order"];
+            }
+            setCustomCookie("songs_order", $order);
+        }
+    }
+    //mode
+    if (empty($_GET["mode"]) == false) {
+        $orderMode = $_GET["mode"];
+        setCustomCookie("songs_order_mode", $orderMode);
+    } else {
+        if (empty($_COOKIE["songs_order_mode"]) == false) {
+            if (preg_match("/^(asc|desc)$/", $_COOKIE["songs_order_mode"])) {
+                $orderMode = $_COOKIE["songs_order_mode"];
+            }
+            setCustomCookie("songs_order_mode", $orderMode);
+        }
+    }
 }
 
-function getModeSelected($column) {
-  if (empty( $_GET["mode"]) == false) {
-      if ($_GET["mode"] == $column) {
+function getOrderSelected($column, $order)
+{
+    if ($order == $column) {
         echo "selected";
-      }
-  }
+    }
+}
+
+function getModeSelected($column, $orderMode)
+{
+    if ($orderMode == $column) {
+        echo "selected";
+    }
 }
 ?>
 
@@ -58,22 +85,40 @@ function getModeSelected($column) {
           <?php
           $showFilter = "";
           if ($_COOKIE["songs_filter_collapse"] == "false") {
-            $showFilter = "show";
+              $showFilter = "show";
           }
           ?>
-          <div class="collapse <?php echo $showFilter;?>" id="collapse">
+          <div class="collapse <?php echo $showFilter; ?>" id="collapse">
             <form method="get" draggable="true">
               <label class="col-form-label text-light">Řadit podle</label>
               <select name="order" class="form-control form-control-sm w-25" draggable="true" required="">
-                <option value="id_song" <?php getOrderSelected("id_song");?>>ID skladby</option>
-                <option value="name_song" <?php getOrderSelected("name_song");?>>Název skladby</option>
-                <option value="name_album" <?php getOrderSelected("name_album");?>>Název alba</option>
-                <option value="name_interpret" <?php getOrderSelected("name_interpret");?>>Jméno interpreta</option>
+                <option value="id_song" <?php getOrderSelected(
+                    "id_song",
+                    $order
+                ); ?>>ID skladby</option>
+                <option value="name_song" <?php getOrderSelected(
+                    "name_song",
+                    $order
+                ); ?>>Název skladby</option>
+                <option value="name_album" <?php getOrderSelected(
+                    "name_album",
+                    $order
+                ); ?>>Název alba</option>
+                <option value="name_interpret" <?php getOrderSelected(
+                    "name_interpret",
+                    $order
+                ); ?>>Jméno interpreta</option>
               </select>
               <label class="col-form-label">Režim</label>
               <select name="mode" class="form-control form-control-sm w-25" required="">
-                <option value="asc" <?php getModeSelected("asc");?>>Vzestupně</option>
-                <option value="desc" <?php getModeSelected("desc");?>>Sestupně</option>
+                <option value="asc" <?php getModeSelected(
+                    "asc",
+                    $orderMode
+                ); ?>>Vzestupně</option>
+                <option value="desc" <?php getModeSelected(
+                    "desc",
+                    $orderMode
+                ); ?>>Sestupně</option>
               </select>
               <input type="submit" value="Řadit" class="btn btn-primary mt-2">
             </form>
@@ -86,13 +131,12 @@ function getModeSelected($column) {
         <div class="col-md-12">
           <div class="list-group mt-4">
               <?php
-              //nástroje
-              require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
-
               //dotaz na všechny skladby
               $result = querySql(
                   "SELECT id_song, name_song, name_album, name_interpret FROM songs LEFT JOIN albums ON songs.id_album = albums.id_album LEFT JOIN interprets ON songs.id_interpret = interprets.id_interpret ORDER BY " .
                       $order .
+                      " " .
+                      $orderMode .
                       ";"
               );
 
