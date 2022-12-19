@@ -38,6 +38,10 @@ function initCookies() {
   if (getCookie("albums_filter_collapse") == "") {
     setCookie("albums_filter_collapse", "true", cookieExDays);
   }
+  //skrytí nabídku filtrů žánrů
+  if (getCookie("genres_filter_collapse") == "") {
+    setCookie("genres_filter_collapse", "true", cookieExDays);
+  }
 }
 
 //změna true/false cookie

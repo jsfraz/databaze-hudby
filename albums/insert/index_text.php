@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         //pokud existují
         if ($typeCount == 1 && $interpretExists && $validGenres) {
-            //aktualizace
+            //vložení
             $db = getSqliteConnection();
             $success = querySqlExecCustom(
                 $db,

@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         //pokud existují
         if ($albumExists && $interpretExists) {
-            //aktualizace
+            //vložení
             $db = getSqliteConnection();
             $success = querySqlExecCustom(
                 $db,

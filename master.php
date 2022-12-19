@@ -34,7 +34,7 @@
               <a class="nav-link" href="/albums">Alba</a>
             </li>
             <li class="nav-item mx-2">
-              <a class="nav-link" href="/">Žánry</a>
+              <a class="nav-link" href="/genres">Žánry</a>
             </li>
             <li class="nav-item mx-2">
               <a class="nav-link" href="/">Interpreti</a>
