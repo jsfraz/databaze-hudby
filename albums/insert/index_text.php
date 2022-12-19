@@ -22,34 +22,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //https://stackoverflow.com/questions/3011383/preg-match-unknown-modifier-help
     if (
         preg_match('#^[^"\']+$#', $name) &&
-        preg_match("/[0-9]+$/", $type) &&
+        preg_match("/^[0-9]+$/", $type) &&
         isValidYmd($released) &&
-        preg_match("/[0-9]+$/", $interpret) &&
-        empty($genreIds) == false
+        preg_match("/^([0-9]+|NULL)$/", $interpret)
     ) {
+        $interpretExists = true;
+
         $typeCount = querySqlSingle(
             "SELECT COUNT(*) FROM album_types WHERE id_type = " . $type . ";"
         );
-        $interpretCount = querySqlSingle(
-            "SELECT COUNT(*) FROM interprets WHERE id_interpret = " .
-                $interpret .
-                ";"
-        );
-        $validGenres = true;
-        for ($i = 0; $i < count($genreIds); $i++) {
-            $count = querySqlSingle(
-                "SELECT COUNT(*) FROM genres WHERE id_genre = " .
-                    $genreIds[$i] .
+        if ($interpret != "NULL") {
+            $interpretCount = querySqlSingle(
+                "SELECT COUNT(*) FROM interprets WHERE id_interpret = " .
+                    $interpret .
                     ";"
             );
-            if ($count != 1) {
-                $validGenres = false;
-                break;
+            if ($interpretCount != 1) {
+                $interpretExists = false;
+            }
+        }
+        $validGenres = true;
+        if (empty($genreIds) == false) {
+            for ($i = 0; $i < count($genreIds); $i++) {
+                $count = querySqlSingle(
+                    "SELECT COUNT(*) FROM genres WHERE id_genre = " .
+                        $genreIds[$i] .
+                        ";"
+                );
+                if ($count != 1) {
+                    $validGenres = false;
+                    break;
+                }
             }
         }
 
         //pokud existují
-        if ($typeCount == 1 && $interpretCount == 1 && $validGenres) {
+        if ($typeCount == 1 && $interpretExists && $validGenres) {
             //aktualizace
             $db = getSqliteConnection();
             $success = querySqlExecCustom(
@@ -65,8 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ");"
             );
             $id = $db->lastInsertRowId();
-            if ($success) {
-              for ($i = 0; $i < count($genreIds); $i++) {
+            if ($success && empty($genreIds) == false) {
+                for ($i = 0; $i < count($genreIds); $i++) {
                     $success = querySqlExec(
                         "INSERT INTO album_genres (id_album, id_genre) VALUES (" .
                             $id .
@@ -150,6 +158,7 @@ while ($row = $typesResult->fetchArray()) {
             <label class="col-2 col-form-label">Interpret</label>
             <div class="col-10">
               <select class="form-control" name="id_interpret" required>
+                <option value="NULL" selected>Žádný interpret</option>
                 <?php //vygenerování interpretů
 
 while ($row = $interpretsResult->fetchArray()) {
@@ -166,7 +175,7 @@ while ($row = $interpretsResult->fetchArray()) {
           <div class="form-group row">
             <label class="col-2 col-form-label">Žánry</label>
             <div class="col-10">
-              <select class="form-control" name="ids_genres[]" multiple required>
+              <select class="form-control" name="ids_genres[]" multiple>
                 <?php //vygenerování žánrů
 
 while ($row = $genresResult->fetchArray()) {

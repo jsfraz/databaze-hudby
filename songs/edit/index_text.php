@@ -6,7 +6,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
         preg_match(
-            "/\/songs\/edit\?id_song=[0-9]+$/",
+            "/^\/songs\/edit\?id_song=[0-9]+$/",
             $_SERVER["REQUEST_URI"]
         ) == false
     ) {
@@ -23,30 +23,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $album = $_POST["id_album"];
     $interpret = $_POST["id_interpret"];
 
-    $songCount; //skladby
-    $albumCount; //alba
-    $interpretCount; //interpreti
     //validace
     if (
-        preg_match("/[0-9]+$/", $id) &&
+        preg_match("/^[0-9]+$/", $id) &&
         preg_match('#^[^"\']+$#', $name) &&
-        preg_match("/[0-9]+$/", $album) &&
-        preg_match("/[0-9]+$/", $interpret)
+        preg_match("/^([0-9]+|NULL)$/", $album) &&
+        preg_match("/^([0-9]+|NULL)$/", $interpret)
     ) {
+        $songCount;
+        $albumExists = true;
+        $interpretExists = true;
+
         $songCount = querySqlSingle(
             "SELECT COUNT(*) FROM songs WHERE id_song = " . $id . ";"
         );
-        $albumCount = querySqlSingle(
-            "SELECT COUNT(*) FROM albums WHERE id_album = " . $album . ";"
-        );
-        $interpretCount = querySqlSingle(
-            "SELECT COUNT(*) FROM interprets WHERE id_interpret = " .
-                $interpret .
-                ";"
-        );
+        if ($album != "NULL") {
+            $albumCount = querySqlSingle(
+                "SELECT COUNT(*) FROM albums WHERE id_album = " . $album . ";"
+            );
+            if ($albumCount != 1) {
+                $albumExists = false;
+            }
+        }
+        if ($interpret != "NULL") {
+            $interpretCount = querySqlSingle(
+                "SELECT COUNT(*) FROM interprets WHERE id_interpret = " .
+                    $interpret .
+                    ";"
+            );
+            if ($interpretCount != 1) {
+                $interpretExists = false;
+            }
+        }
 
         //pokud existují
-        if ($songCount == 1 && $albumCount == 1 && $interpretCount == 1) {
+        if ($songCount == 1 && $albumExists && $interpretExists) {
             //aktualizace
             $success = querySqlExec(
                 "UPDATE songs SET name_song = '" .
@@ -132,8 +143,12 @@ if ($count == 1) {
             <label class="col-2 col-form-label">Album</label>
             <div class="col-10">
               <select class="form-control" name="id_album" required>
+                <option value="NULL" <?php if (empty($song["id_album"])) {
+                    echo "selected";
+                } ?>>Žádné album</option>
                 <?php //vygenerování alb
-                while ($row = $albumsResult->fetchArray()) {
+
+while ($row = $albumsResult->fetchArray()) {
                     $selected = "";
                     //pokud je album vybráno
                     if ($song["id_album"] == $row["id_album"]) {
@@ -155,8 +170,12 @@ if ($count == 1) {
             <label class="col-2 col-form-label">Interpret</label>
             <div class="col-10">
               <select class="form-control" name="id_interpret" required>
+                <option value="NULL" <?php if (empty($song["id_interpret"])) {
+                    echo "selected";
+                } ?>>Žádný interpret</option>
                 <?php //vygenerování interpretů
-                while ($row = $interpretsResult->fetchArray()) {
+
+while ($row = $interpretsResult->fetchArray()) {
                     $selected = "";
                     //pokud je interpret vybrán
                     if ($song["id_interpret"] == $row["id_interpret"]) {

@@ -1,6 +1,8 @@
 <?php
 if ($_SERVER["REQUEST_URI"] != "/") {
-    exit();
+    $errorTitle = "Chyba";
+        $errorText = "Neplatný požadavek.";
+        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
 }
 ?>
 

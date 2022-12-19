@@ -5,7 +5,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
         preg_match(
-            "/\/albums(.{0}|\?order=(id_album|name_album|name_type|released_album|name_interpret)&mode=(asc|desc))$/",
+            "/^\/albums(.{0}|\?order=(id_album|name_album|name_type|released_album|name_interpret)&mode=(asc|desc))$/",
             $_SERVER["REQUEST_URI"]
         ) == false
     ) {
@@ -137,7 +137,7 @@ function getModeSelected($column, $orderMode)
               <?php
               //dotaz na všechny alba
               $result = querySql(
-                  "SELECT id_album, name_album, name_type, released_album, name_interpret FROM albums LEFT JOIN album_types ON albums.id_type = album_types.id_type LEFT JOIN interprets ON albums.id_interpret = interprets.id_interpret ORDER BY " .
+                  "SELECT id_album, name_album, name_type, released_album, albums.id_interpret, name_interpret FROM albums LEFT JOIN album_types ON albums.id_type = album_types.id_type LEFT JOIN interprets ON albums.id_interpret = interprets.id_interpret ORDER BY " .
                       $order .
                       " " .
                       $orderMode .
@@ -177,7 +177,7 @@ function getModeSelected($column, $orderMode)
                               '<div class="col-md-3"><h5></h5></div>';
                       } else {
                           $interpretColumn =
-                              '<a class="col-md-3" href="/"><h5>' .
+                              '<a class="col-md-3" href="/albums/edit?id_album=' . $row["id_interpret"] . '"><h5>' .
                               $row["name_interpret"] .
                               "</h5></a>";
                       }
@@ -189,12 +189,12 @@ function getModeSelected($column, $orderMode)
                           $row["name_album"] .
                           '</h5>
                 </div>
-                <div class="col-md-2" href="/">
+                <div class="col-md-2">
                   <h5>' .
                           $row["name_type"] .
                           '</h5>
                 </div>
-                <div class="col-md-3" href="/">
+                <div class="col-md-3">
                   <h5>' .
                           convertEpochTime($row["released_album"]) .
                           '</h5>

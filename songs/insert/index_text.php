@@ -13,33 +13,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $album = $_POST["id_album"];
     $interpret = $_POST["id_interpret"];
 
-    $albumCount; //alba
-    $interpretCount; //interpreti
     //validace
     if (
         preg_match('#^[^"\']+$#', $name) &&
-        preg_match("/[0-9]+$/", $album) &&
-        preg_match("/[0-9]+$/", $interpret)
+        preg_match("/^([0-9]+|NULL)$/", $album) &&
+        preg_match("/^([0-9]+|NULL)$/", $interpret)
     ) {
-        $albumCount = querySqlSingle(
-            "SELECT COUNT(*) FROM albums WHERE id_album = " . $album . ";"
-        );
-        $interpretCount = querySqlSingle(
-            "SELECT COUNT(*) FROM interprets WHERE id_interpret = " .
-                $interpret .
-                ";"
-        );
+        $albumExists = true;
+        if ($album != "NULL") {
+            $albumCount = querySqlSingle(
+                "SELECT COUNT(*) FROM albums WHERE id_album = " . $album . ";"
+            );
+            if ($albumCount != 1) {
+                $albumExists = false;
+            }
+        }
+        $interpretExists = true;
+        if ($interpret != "NULL") {
+            $interpretCount = querySqlSingle(
+                "SELECT COUNT(*) FROM interprets WHERE id_interpret = " .
+                    $interpret .
+                    ";"
+            );
+            if ($interpretCount != 1) {
+                $interpretExists = fasle;
+            }
+        }
 
         //pokud existují
-        if ($albumCount == 1 && $interpretCount == 1) {
+        if ($albumExists && $interpretExists) {
             //aktualizace
             $db = getSqliteConnection();
-            $success = querySqlExecCustom($db , "INSERT INTO songs (name_song, id_album, id_interpret) VALUES ('" . $name . "', " . $album . ", " . $interpret . ");");
+            $success = querySqlExecCustom(
+                $db,
+                "INSERT INTO songs (name_song, id_album, id_interpret) VALUES ('" .
+                    $name .
+                    "', " .
+                    $album .
+                    ", " .
+                    $interpret .
+                    ");"
+            );
 
             if ($success) {
-              //id posledního vloženého řádku: https://stackoverflow.com/questions/8892973/how-to-get-last-insert-id-in-sqlite
-              $id = $db->lastInsertRowId();
-              header("Location: /songs/edit?id_song=" . $id);
+                //id posledního vloženého řádku: https://stackoverflow.com/questions/8892973/how-to-get-last-insert-id-in-sqlite
+                $id = $db->lastInsertRowId();
+                header("Location: /songs/edit?id_song=" . $id);
             } else {
                 $errorTitle = "Chyba";
                 $errorText = "Nepodařilo se přidat skladbu.";
@@ -55,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errorText = "Neplatný požadavek.";
         include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
-  exit();
+    exit();
 }
 
 //alba
@@ -81,6 +100,7 @@ $interpretsResult = querySql(
             <label class="col-2 col-form-label">Album</label>
             <div class="col-10">
               <select class="form-control" name="id_album" required>
+                <option value="NULL" selected>Žádné album</option>
                 <?php //vygenerování alb
 
 while ($row = $albumsResult->fetchArray()) {
@@ -98,6 +118,7 @@ while ($row = $albumsResult->fetchArray()) {
             <label class="col-2 col-form-label">Interpret</label>
             <div class="col-10">
               <select class="form-control" name="id_interpret" required>
+                <option value="NULL" selected>Žádný interpret</option>
                 <?php //vygenerování interpretů
 
 while ($row = $interpretsResult->fetchArray()) {

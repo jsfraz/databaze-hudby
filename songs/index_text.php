@@ -5,7 +5,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
         preg_match(
-            "/\/songs(.{0}|\?order=(id_song|name_song|name_album|name_interpret)&mode=(asc|desc))$/",
+            "/^\/songs(.{0}|\?order=(id_song|name_song|name_album|name_interpret)&mode=(asc|desc))$/",
             $_SERVER["REQUEST_URI"]
         ) == false
     ) {
@@ -133,7 +133,7 @@ function getModeSelected($column, $orderMode)
               <?php
               //dotaz na všechny skladby
               $result = querySql(
-                  "SELECT id_song, name_song, name_album, name_interpret FROM songs LEFT JOIN albums ON songs.id_album = albums.id_album LEFT JOIN interprets ON songs.id_interpret = interprets.id_interpret ORDER BY " .
+                  "SELECT id_song, name_song, songs.id_album, name_album, songs.id_interpret, name_interpret FROM songs LEFT JOIN albums ON songs.id_album = albums.id_album LEFT JOIN interprets ON songs.id_interpret = interprets.id_interpret ORDER BY " .
                       $order .
                       " " .
                       $orderMode .
@@ -170,7 +170,7 @@ function getModeSelected($column, $orderMode)
                               '<div class="col-md-4"><h5></h5></div>';
                       } else {
                           $albumColumn =
-                              '<a class="col-md-4" href="/"><h5>' .
+                              '<a class="col-md-4" href="/albums/edit?id_album=' . $row["id_album"] . '"><h5>' .
                               $row["name_album"] .
                               "</h5></a>";
                       }
@@ -181,7 +181,7 @@ function getModeSelected($column, $orderMode)
                               '<div class="col-md-3"><h5></h5></div>';
                       } else {
                           $interpretColumn =
-                              '<a class="col-md-3" href="/"><h5>' .
+                              '<a class="col-md-3" href="/interprets/edit?id_interpret=' . $row["id_interpret"] . '"><h5>' .
                               $row["name_interpret"] .
                               "</h5></a>";
                       }
