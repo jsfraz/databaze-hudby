@@ -29,21 +29,6 @@ function getCookie(cname) {
   return "";
 }
 
-function initCookies() {
-  //skrytí nabídku filtrů skaldeb
-  if (getCookie("songs_filter_collapse") == "") {
-    setCookie("songs_filter_collapse", "true", cookieExDays);
-  }
-  //skrytí nabídku filtrů alb
-  if (getCookie("albums_filter_collapse") == "") {
-    setCookie("albums_filter_collapse", "true", cookieExDays);
-  }
-  //skrytí nabídku filtrů žánrů
-  if (getCookie("genres_filter_collapse") == "") {
-    setCookie("genres_filter_collapse", "true", cookieExDays);
-  }
-}
-
 //změna true/false cookie
 function filterClick(cname) {
   value = getCookie(cname);

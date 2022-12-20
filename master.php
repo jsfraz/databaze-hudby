@@ -15,7 +15,7 @@
     <script type="text/javascript" src="/js/cookies.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
   </head>
-  <body onload="initCookies();" class="text-center">
+  <body class="text-center">
     <!-- začátek headeru-->
     <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
       <div class="container">
@@ -37,16 +37,22 @@
               <a class="nav-link" href="/genres">Žánry</a>
             </li>
             <li class="nav-item mx-2">
-              <a class="nav-link" href="/">Interpreti</a>
+              <a class="nav-link" href="/interprets">Interpreti</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
     <!-- konec headeru-->
+
+    <?php if ($_SERVER["REQUEST_URI"] == "/master.php") {
+      $errorTitle = "Chyba";
+      $errorText = "Neplatný požadavek.";
+      include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
+    } ?>
     
     <!-- stránka-->
-    <?php include($content); ?>
+    <?php include $content; ?>
 
     <!-- začátek footeru-->
     <footer class="text-md-left text-center p-4">
@@ -62,7 +68,9 @@
                 <input type="text" class="form-control" name="message" placeholder="Zpráva" required>
               </fieldset>
               <!-- skrytá proměnná https://stackoverflow.com/questions/34253825/how-to-send-hidden-php-variable-with-html-form/34254076#34254076 --->
-              <input type="hidden" name="path" value="<?php echo $_SERVER["REQUEST_URI"] ?>" required>
+              <input type="hidden" name="path" value="<?php echo $_SERVER[
+                  "REQUEST_URI"
+              ]; ?>" required>
               <button type="submit" class="btn btn-outline-primary">Odeslat</button>
             </form>
           </div>

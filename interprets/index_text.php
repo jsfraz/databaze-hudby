@@ -5,7 +5,7 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/tools.php";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (
         preg_match(
-            "/^\/albums(.{0}|\?order=(id_album|name_album|name_type|released_album|name_interpret)&mode=(asc|desc))$/",
+            "/^\/interprets(.{0}|\?order=(id_interpret|name_interpret)&mode=(asc|desc))$/",
             $_SERVER["REQUEST_URI"]
         ) == false
     ) {
@@ -14,35 +14,35 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
     }
 
-    $order = "id_album";
+    $order = "id_interpret";
     $orderMode = "asc";
     //order
     if (empty($_GET["order"]) == false) {
         $order = $_GET["order"];
-        setCustomCookie("albums_order", $order);
+        setCustomCookie("interprets_order", $order);
     } else {
-        if (empty($_COOKIE["albums_order"]) == false) {
+        if (empty($_COOKIE["interprets_order"]) == false) {
             if (
                 preg_match(
-                    "/^(id_album|name_album|name_type|released_album|name_interpret)$/",
-                    $_COOKIE["albums_order"]
+                    "/^(id_interpret|name_interpret)$/",
+                    $_COOKIE["interprets_order"]
                 )
             ) {
-                $order = $_COOKIE["albums_order"];
+                $order = $_COOKIE["interprets_order"];
             }
-            setCustomCookie("albums_order", $order);
+            setCustomCookie("interprets_order", $order);
         }
     }
     //mode
     if (empty($_GET["mode"]) == false) {
         $orderMode = $_GET["mode"];
-        setCustomCookie("albums_order_mode", $orderMode);
+        setCustomCookie("interprets_order_mode", $orderMode);
     } else {
-        if (empty($_COOKIE["albums_order_mode"]) == false) {
-            if (preg_match("/^(asc|desc)$/", $_COOKIE["albums_order_mode"])) {
-                $orderMode = $_COOKIE["albums_order_mode"];
+        if (empty($_COOKIE["interprets_order_mode"]) == false) {
+            if (preg_match("/^(asc|desc)$/", $_COOKIE["interprets_order_mode"])) {
+                $orderMode = $_COOKIE["interprets_order_mode"];
             }
-            setCustomCookie("albums_order_mode", $orderMode);
+            setCustomCookie("interprets_order_mode", $orderMode);
         }
     }
 }
@@ -81,10 +81,10 @@ function getModeSelected($column, $orderMode)
       <div class="row">
         <div class="col-md-12 text-left">
           <!-- collapse výběru řazení https://getbootstrap.com/docs/4.0/components/collapse/ --->
-          <a onclick="filterClick('albums_filter_collapse')" data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">Filtry</a>
+          <a onclick="filterClick('interprets_filter_collapse')" data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">Filtry</a>
           <?php
           $showFilter = "";
-          if ($_COOKIE["albums_filter_collapse"] == "false") {
+          if ($_COOKIE["interprets_filter_collapse"] == "false") {
               $showFilter = "show";
           }
           ?>
@@ -92,22 +92,10 @@ function getModeSelected($column, $orderMode)
             <form method="get" draggable="true">
               <label class="col-form-label text-light">Řadit podle</label>
               <select name="order" class="form-control form-control-sm w-25" draggable="true" required>
-                <option value="id_album" <?php getOrderSelected(
-                    "id_album",
+                <option value="id_interpret" <?php getOrderSelected(
+                    "id_interpret",
                     $order
-                ); ?>>ID alba</option>
-                <option value="name_album" <?php getOrderSelected(
-                    "name_album",
-                    $order
-                ); ?>>Název alba</option>
-                <option value="name_type" <?php getOrderSelected(
-                    "name_type",
-                    $order
-                ); ?>>Typ alba</option>
-                <option value="released_album" <?php getOrderSelected(
-                    "released_album",
-                    $order
-                ); ?>>Datum vydání</option>
+                ); ?>>ID interpreta</option>
                 <option value="name_interpret" <?php getOrderSelected(
                     "name_interpret",
                     $order
@@ -135,9 +123,9 @@ function getModeSelected($column, $orderMode)
         <div class="col-md-12">
           <div class="list-group mt-4">
               <?php
-              //dotaz na všechny alba
+              //dotaz na všechny skladby
               $result = querySql(
-                  "SELECT id_album, name_album, name_type, released_album, albums.id_interpret, name_interpret FROM albums LEFT JOIN album_types ON albums.id_type = album_types.id_type LEFT JOIN interprets ON albums.id_interpret = interprets.id_interpret ORDER BY " .
+                  "SELECT id_interpret, name_interpret FROM interprets ORDER BY " .
                       $order .
                       " " .
                       $orderMode .
@@ -151,66 +139,35 @@ function getModeSelected($column, $orderMode)
                   //hlavička tabulky
                   echo '<div class="list-group-item  text-center text-uppercase">
               <div class="row">
-                <div class="col-md-3">
-                  <h4>Název</h4>
-                </div>
-                <div class="col-md-2">
-                  <h4>Typ</h4>
-                </div>
-                <div class="col-md-3">
-                  <h4>Vydáno</h4>
-                </div>
-                <div class="col-md-3">
-                  <h4>INTERPRET</h4>
+                <div class="col-md-11">
+                  <h4>Jméno</h4>
                 </div>
                 <div class="col-md-1">
-                  <a href="/albums/insert"><i class="fa fa-2x fa-plus text-light"></i></a>
+                  <a href="/interprets/insert"><i class="fa fa-2x fa-plus text-light"></i></a>
                 </div>
               </div>
               </div>';
                   //vypsání skladeb
                   while ($row = $result->fetchArray()) {
-                      //sloupeček se jménem interpreta
-                      $interpretColumn;
-                      if (empty($row["name_interpret"])) {
-                          $interpretColumn =
-                              '<div class="col-md-3"><h5></h5></div>';
-                      } else {
-                          $interpretColumn =
-                              '<a class="col-md-3" href="/albums/edit?id_album=' . $row["id_interpret"] . '"><h5>' .
-                              $row["name_interpret"] .
-                              "</h5></a>";
-                      }
 
                       echo '<div class="list-group-item text-center">
                 <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-11">
                   <h5>' .
-                          $row["name_album"] .
-                          '</h5>
-                </div>
-                <div class="col-md-2">
-                  <h5>' .
-                          $row["name_type"] .
-                          '</h5>
-                </div>
-                <div class="col-md-3">
-                  <h5>' .
-                          convertEpochTime($row["released_album"]) .
+                          $row["name_interpret"] .
                           '</h5>
                 </div>' .
-                          $interpretColumn .
-                          '<div class="col-md-1" >
+                          '<div class="col-md-1">
                   <div class="row">
                     <div class="col-md-6">
-                      <a href="/albums/edit?id_album=' .
-                          $row["id_album"] .
+                      <a href="/interprets/edit?id_interpret=' .
+                          $row["id_interpret"] .
                           '"><i class="fa fa-2x fa-pencil text-light"></i></a>
                     </div>
                     <div class="col-md-6">
-                      <form action="/albums/delete" method="post">
-                         <input type="hidden" required="required" name="id_album" value="' .
-                          $row["id_album"] .
+                      <form action="/interprets/delete" method="post">
+                         <input type="hidden" required="required" name="id_interpret" value="' .
+                          $row["id_interpret"] .
                           '">
                         <button class="transparent-btn" type="submit"><i class="fa fa-2x fa-trash text-danger"></i></button>
                       </form>

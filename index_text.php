@@ -1,14 +1,15 @@
 <?php
 if ($_SERVER["REQUEST_URI"] != "/") {
     $errorTitle = "Chyba";
-        $errorText = "Neplatný požadavek.";
-        include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
-}
-?>
+    $errorText = "Neplatný požadavek.";
+    include $_SERVER["DOCUMENT_ROOT"] . "/error.php";
+} ?>
 
 <?php
-$x = rand(1,25);
-echo '<div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(images/index/' . $x . '.jpg);">';
+$x = rand(1, 25);
+echo '<div class="d-flex align-items-center py-5 cover section-fade-in-out" style="background-image: url(images/index/' .
+    $x .
+    '.jpg);">';
 ?>
   <div class="container">
     <div class="row">

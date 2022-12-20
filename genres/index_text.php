@@ -91,7 +91,7 @@ function getModeSelected($column, $orderMode)
           <div class="collapse <?php echo $showFilter; ?>" id="collapse">
             <form method="get" draggable="true">
               <label class="col-form-label text-light">Řadit podle</label>
-              <select name="order" class="form-control form-control-sm w-25" draggable="true" required="">
+              <select name="order" class="form-control form-control-sm w-25" draggable="true" required>
                 <option value="id_genre" <?php getOrderSelected(
                     "id_genre",
                     $order
@@ -102,7 +102,7 @@ function getModeSelected($column, $orderMode)
                 ); ?>>Název žánru</option>
               </select>
               <label class="col-form-label">Režim</label>
-              <select name="mode" class="form-control form-control-sm w-25" required="">
+              <select name="mode" class="form-control form-control-sm w-25" required>
                 <option value="asc" <?php getModeSelected(
                     "asc",
                     $orderMode
